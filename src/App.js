@@ -2,7 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { connect } from "react-redux";
-import { selectors as userUploadSelectors } from "./store/userUpload/userUpload";
+import { selectors as userUploadSelectors } from "../shared/store/userUpload";
 const App = ({message}) => {
   return (
     <div className="App">

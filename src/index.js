@@ -8,6 +8,7 @@ import createSagaMiddleware from 'redux-saga';
 import devConfigureStore from "./store/devConfigureStore";
 import configureStore from "./store/configureStore";
 import rootSaga from './store/rootSaga';
+import synchronizer from './store/synchronizer';
 
 const sagaMiddleware = createSagaMiddleware()
 let store;
@@ -19,6 +20,8 @@ else {
     const error = new Error(`Environment variable not set. (${process.env.NODE_ENV})`)
     throw error;
 }
+
+synchronizer(store);
 
 sagaMiddleware.run(rootSaga);
 

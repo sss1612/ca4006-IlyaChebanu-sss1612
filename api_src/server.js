@@ -12,11 +12,16 @@ const store = configureStore(sagaMiddleware);
 sagaMiddleware.run(rootSaga)
 const app = express();
 
-store.dispatch(userUploadActions.test("dingus amingus"))
+setTimeout(() => {
+    for (let i = 0; i < 10; i++) {
+        store.dispatch(userUploadActions.test("dingus amingus"))
+        store.dispatch(userUploadActions.test("dingus amingus"))
+    }
+}, 5000);
 console.log("testing my logs lmao")
 
 app.get("/", (req, res) => {
-    res.send(`${Date.now()}`);
+    res.send(store.getState());
 })
 app.use(uploadRouter);
 
