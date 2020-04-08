@@ -1,14 +1,19 @@
-const connect = (store) => {
+let subscribedStores = [];
+const synchronizer = (store) => {
   const ws = new WebSocket('ws://localhost:7070');
 
   ws.onmessage = e => {
     const message = JSON.parse(e.data);
-    store.dispatch(message.data);
+    const actionNamespace = message.data.type.split('/')[0];
+
+    if (subscribedStores.includes(actionNamespace)) {
+      store.dispatch(message.data);
+    }
   };
 
   ws.onclose = e => {
     setTimeout(() => {
-      connect(store);
+      synchronizer(store);
     }, 100);
   };
 
@@ -17,5 +22,9 @@ const connect = (store) => {
   };
 };
 
+synchronizer.subscribe = storeNamespace => subscribedStores.push(storeNamespace);
+synchronizer.unsubscribe = storeNamespace => {
+  subscribedStores = subscribedStores.filter(n => n !== storeNamespace);
+};
 
-export default connect;
+export default synchronizer;

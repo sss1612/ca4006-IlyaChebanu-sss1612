@@ -22,6 +22,7 @@ else {
 }
 
 synchronizer(store);
+synchronizer.subscribe('userUpload');
 
 sagaMiddleware.run(rootSaga);
 
