@@ -21,7 +21,7 @@
     "redux-saga": "^1.1.3"
   },
   "scripts": {
-    "api": "rm -rf lib && npx babel api_src -d lib/ && nodemon lib/server.js",
+    "api": "rm -rf lib && nodemon --watch api_src/ --exec 'npx babel api_src -d lib/ && node lib/server.js'",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

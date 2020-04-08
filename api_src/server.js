@@ -20,4 +20,4 @@ app.get("/", (req, res) => {
 })
 app.use(uploadRouter);
 
-app.listen("8080", () => console.log("Please visit http:localhost:8080 in your browser!"));
+app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
