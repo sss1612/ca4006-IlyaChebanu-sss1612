@@ -1,6 +1,5 @@
 import "regenerator-runtime/runtime";
 import express from "express";
-import workerThreadShite from './worker_thread';
 import createSagaMiddleware from 'redux-saga';
 import configureStore from "./store/configureStore";
 import rootSaga from './store/rootSaga';
@@ -8,14 +7,29 @@ import uploadRouter from "./endpoints/upload";
 
 import { actions as userUploadActions } from "../shared/store/userUpload";
 
+import { Worker } from 'worker_threads';
+
 const sagaMiddleware = createSagaMiddleware();
 const store = configureStore(sagaMiddleware);
 sagaMiddleware.run(rootSaga)
 const app = express();
 
-const myworker = workerThreadShite(`console.log("lmao")`)
 
-console.log("myworker", myworker);
+const asyncWrappedWorker = (data, path) => new Promise((resolve, reject) => {
+    const worker = new Worker(path);
+    worker.once('message', result => {
+        resolve(result);
+    });
+    worker.once('error', error => {
+        reject(error);
+    });
+    worker.postMessage(data);
+});
+
+asyncWrappedWorker(68, `${__dirname}/plusOneWorker.js`)
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+
 setTimeout(() => {
     for (let i = 0; i < 10; i++) {
         store.dispatch(userUploadActions.test("dingus amingus"))
