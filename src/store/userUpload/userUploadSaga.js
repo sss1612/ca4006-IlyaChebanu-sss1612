@@ -3,7 +3,7 @@ import {
     actions as userUploadActions,
     TEST,
 }
-from "./userUpload";
+from "../../../shared/store/userUpload";
 
 function* testSaga(action) {
     try {

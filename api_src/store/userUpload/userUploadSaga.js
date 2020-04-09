@@ -3,7 +3,7 @@ import {
     actions as userUploadActions,
     TEST,
 }
-from "./userUpload";
+from "../../../shared/store/userUpload";
 
 function* testSaga(action) {
     try {
@@ -16,7 +16,7 @@ function* testSaga(action) {
 }
 
 function* testSagaWatcher() {
-    yield takeLatest(TEST, testSaga);
+    // yield takeLatest(TEST, testSaga);
 }
 
 export default function* rootUserUploadSaga() {
