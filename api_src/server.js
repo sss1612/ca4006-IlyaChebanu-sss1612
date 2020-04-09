@@ -5,7 +5,7 @@ import configureStore from "./store/configureStore";
 import rootSaga from './store/rootSaga';
 import uploadRouter from "./endpoints/upload";
 
-import { actions as userUploadActions } from "./store/userUpload/userUpload";
+import { actions as userUploadActions } from "../shared/store/userUpload";
 
 const sagaMiddleware = createSagaMiddleware();
 const store = configureStore(sagaMiddleware);
