@@ -16,7 +16,7 @@ function* testSaga(action) {
 }
 
 function* testSagaWatcher() {
-    // yield takeLatest(TEST, testSaga);
+    yield takeLatest(TEST, testSaga);
 }
 
 export default function* rootUserUploadSaga() {
