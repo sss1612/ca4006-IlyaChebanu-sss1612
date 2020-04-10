@@ -10,6 +10,7 @@ export const REMOVE_FROM_QUEUE = "sharedState/REMOVE_FROM_QUEUE";
 export const SET_PROCESSING_ERROR = "sharedState/SET_PROCESSING_ERROR";
 export const CLEAR_PROCESSING_ERROR = "sharedState/CLEAR_PROCESSING_ERROR";
 export const NEW_FILE_ADDED = "sharedState/NEW_FILE_ADDED";
+export const SET_INITIAL_STATE = "sharedState/SET_INITIAL_STATE";
 
 
 // Selectors
@@ -45,6 +46,10 @@ export const actions = {
     type: NEW_FILE_ADDED,
     payload: filename,
   }),
+  setInitialState: (state) => ({
+    type: SET_INITIAL_STATE,
+    payload: state,
+  }),
 }
 
 
@@ -75,6 +80,9 @@ export default function reducer(state=initialState, { type, payload }) {
         ...state,
         processingError: null,
       };
+    }
+    case (SET_INITIAL_STATE): {
+      return payload;
     }
     default: {
       return state;

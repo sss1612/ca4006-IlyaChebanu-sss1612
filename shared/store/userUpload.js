@@ -10,6 +10,7 @@ const initialState = {
 export const TEST = "userUpload/TEST";
 export const TEST_SUCCESS = "userUpload/TEST_SUCCESS";
 export const TEST_ERROR = "userUpload/TEST_ERROR";
+export const SET_INITIAL_STATE = "userUpload/SET_INITIAL_STATE";
 
 
 // Selectors
@@ -29,6 +30,9 @@ export default function reducer(state=initialState, action) {
               ...state,
               success,
           }
+      }
+      case (SET_INITIAL_STATE): {
+        return action.payload;
       }
 
       default: {
@@ -51,5 +55,9 @@ export const actions = {
   testSuccess: successMessage => ({
       type: TEST_SUCCESS,
       payload: successMessage
+  }),
+  setInitialState: state => ({
+    type: SET_INITIAL_STATE,
+    payload: state,
   }),
 }

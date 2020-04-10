@@ -32,6 +32,7 @@ setTimeout(() => {
     }));
 }, 1000);
 
+
 app.get("/", (req, res) => {
     res.send(store.getState());
 })
