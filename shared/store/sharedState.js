@@ -24,7 +24,8 @@ export const selectors = {
   getProcessingQueue: state => state.sharedState.processingQueue,
   getProcessingError: state => state.sharedState.processingError,
   getSuccessSelector: state => state.sharedState.success,
-  getMetadataSelector: state => state.sharedState.metaData
+  getMetadataSelector: state => state.sharedState.metaData,
+  getUploadedFiles: state => Object.keys(state.sharedState.uploadedFiles),
 }
 
 
