@@ -15,16 +15,16 @@ router.use((req, res, next) => {
 })
 
 router.use(bodyParser.json());
-router.post("/filter", (req, res) => {
-
-    const bodyData = req.body;
-    spawnWorker(bodyData, `${__dirname}/../workers/metadataWorker.js`)
-    .then(chunkStats => {
+router.post("/filter", async (req, res, next) => {
+    try {
+        const bodyData = req.body;
+        const chunkStats = await spawnWorker(bodyData, `${__dirname}/../workers/metadataWorker.js`)
         res.send(`${Date.now()}: ayy lmao: done`)
         store.dispatch(userUploadActions.addMetadata(chunkStats));
-    })
-    .catch(error => console.error(error));
-
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
 })
 
 export default router;
