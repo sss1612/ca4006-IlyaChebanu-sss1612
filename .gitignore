@@ -24,3 +24,4 @@ yarn-error.log*
 
 /lib
 /api_dist
+/uploads
