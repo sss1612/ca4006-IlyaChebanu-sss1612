@@ -25,8 +25,8 @@ export const actions = {
   addToQueue: payload => ({
     type: ADD_TO_QUEUE,
     payload: {
-      ...payload,
       taskId: Math.floor(Math.random() * 1000000),
+      ...payload,
     }
   }),
   removeFromQueue: taskId => ({

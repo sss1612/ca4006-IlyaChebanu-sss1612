@@ -10,7 +10,28 @@ import { Worker } from 'worker_threads';
 
 const app = express();
 
-store.dispatch(sharedStateActions.addToQueue('test file'));
+store.dispatch(sharedStateActions.addToQueue({
+    filter: 'a-c',
+    wordsCount: {
+        anxious: 168,
+        bacon: 168,
+        collaborative: 168,
+        columns: 168,
+        consumed: 168,
+    },
+    taskId: 69,
+}));
+store.dispatch(sharedStateActions.removeFromQueue(69));
+store.dispatch(sharedStateActions.addToQueue({
+    filter: 'a-c',
+    wordsCount: {
+        anxious: 168,
+        bacon: 168,
+        collaborative: 168,
+        columns: 168,
+        consumed: 168,
+    }
+}));
 
 const asyncWrappedWorker = (data, path) => new Promise((resolve, reject) => {
     const worker = new Worker(path);
@@ -23,17 +44,17 @@ const asyncWrappedWorker = (data, path) => new Promise((resolve, reject) => {
     worker.postMessage(data);
 });
 
-asyncWrappedWorker(68, `${__dirname}/plusOneWorker.js`)
-    .then(data => console.log(data))
-    .catch(error => console.error(error));
+// asyncWrappedWorker(68, `${__dirname}/plusOneWorker.js`)
+//     .then(data => console.log(data))
+//     .catch(error => console.error(error));
 
-setTimeout(() => {
-    for (let i = 0; i < 10; i++) {
-        store.dispatch(userUploadActions.test("dingus amingus"))
-        store.dispatch(userUploadActions.test("dingus amingus"))
-    }
-}, 5000);
-console.log("testing my logs lmao")
+// setTimeout(() => {
+//     for (let i = 0; i < 10; i++) {
+//         store.dispatch(userUploadActions.test("dingus amingus"))
+//         store.dispatch(userUploadActions.test("dingus amingus"))
+//     }
+// }, 5000);
+// console.log("testing my logs lmao")
 
 app.get("/", (req, res) => {
     res.send(store.getState());
