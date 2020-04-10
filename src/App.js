@@ -2,7 +2,10 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { connect } from "react-redux";
+import FilterFieldsComponent from "./FilterFields/FilterFields";
 import { selectors as userUploadSelectors } from "../shared/store/userUpload";
+import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
+
 const App = ({message}) => {
   return (
     <div className="App">
@@ -19,7 +22,9 @@ const App = ({message}) => {
         >
           Learn React
         </a>
-          <p id="fucksake">{message}</p>
+          <p>{message}</p>
+          <UploadButtonComponent/>
+          <FilterFieldsComponent/>
       </header>
     </div>
   );
