@@ -7,10 +7,10 @@ const initialState = {
   success: "naw"
 };
 
-export const TEST = `${__filename}/TEST`;
-export const TEST_SUCCESS = `${__filename}/TEST_SUCCESS`;
-export const TEST_ERROR = `${__filename}/TEST_ERROR`;
-export const SET_INITIAL_STATE = `${__filename}/SET_INITIAL_STATE`;
+export const TEST = "userUpload/TEST";
+export const TEST_SUCCESS = "userUpload/TEST_SUCCESS";
+export const TEST_ERROR = "userUpload/TEST_ERROR";
+export const SET_INITIAL_STATE = "userUpload/SET_INITIAL_STATE";
 
 
 // Selectors

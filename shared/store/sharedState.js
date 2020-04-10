@@ -5,12 +5,12 @@ const initialState = {
   processingError: null,
 };
 
-export const ADD_TO_QUEUE = `${__filename}/ADD_TO_QUEUE`;
-export const REMOVE_FROM_QUEUE = `${__filename}/REMOVE_FROM_QUEUE`;
-export const SET_PROCESSING_ERROR = `${__filename}/SET_PROCESSING_ERROR`;
-export const CLEAR_PROCESSING_ERROR = `${__filename}/CLEAR_PROCESSING_ERROR`;
-export const NEW_FILE_ADDED = `${__filename}/NEW_FILE_ADDED`;
-export const SET_INITIAL_STATE = `${__filename}/SET_INITIAL_STATE`;
+export const ADD_TO_QUEUE = "sharedState/ADD_TO_QUEUE";
+export const REMOVE_FROM_QUEUE = "sharedState/REMOVE_FROM_QUEUE";
+export const SET_PROCESSING_ERROR = "sharedState/SET_PROCESSING_ERROR";
+export const CLEAR_PROCESSING_ERROR = "sharedState/CLEAR_PROCESSING_ERROR";
+export const NEW_FILE_ADDED = "sharedState/NEW_FILE_ADDED";
+export const SET_INITIAL_STATE = "sharedState/SET_INITIAL_STATE";
 
 
 // Selectors
