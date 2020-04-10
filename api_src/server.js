@@ -8,12 +8,13 @@ import { actions as userUploadActions } from "../shared/store/userUpload";
 
 const uploadPath = `${__dirname.split("/api_dist")[0]}/uploads`;
 
-// populate currurent files in uploads dir
-fs.readdir(uploadPath, (err, files) => {
-    files.forEach(file => {
-        store.dispatch(userUploadActions.addNewFilename(file));
-    });
-  });
+if (!fs.existsSync(uploadPath)) {
+    fs.mkdirSync(uploadPath);
+}
+const files = fs.readdirSync(uploadPath);
+files.forEach(file => {
+    store.dispatch(userUploadActions.addNewFilename(file));
+});
 
   // setTimeout(() => {
 //     for (let i = 0; i < 10; i++) {
