@@ -28,11 +28,15 @@ parentPort.once('message', bodyData => {
     }
     return false;
   });
+
   const chunkStats = {
+    filename,
     filter,
-    totalWordCount: 0,
-    wordsCount: {},
-    letterCount: {}
+    stats: {
+      totalWordCount: 0,
+      wordsCount: {},
+      letterCount: {}
+    }
   };
 
   const getWordChunkCount = new Promise((resolve, reject) => {
@@ -40,10 +44,10 @@ parentPort.once('message', bodyData => {
     filteredFileLines.forEach(line => {
       const [, ,word , count] = line.split("\t");
       totalWordCount += parseInt(count);
-      chunkStats.wordsCount[word] = parseInt(count.trim());
+      chunkStats.stats.wordsCount[word] = parseInt(count.trim());
     });
 
-    chunkStats.totalWordCount = totalWordCount;
+    chunkStats.stats.totalWordCount = totalWordCount;
     resolve();
   });
     
@@ -55,10 +59,10 @@ parentPort.once('message', bodyData => {
       for (var i = 0; i < word.length; i++) {
         const char = word.charAt(i).toLowerCase();
 
-        if (alphabet.includes(char) && char in chunkStats.letterCount) {
-          chunkStats.letterCount[char]++;
+        if (alphabet.includes(char) && char in chunkStats.stats.letterCount) {
+          chunkStats.stats.letterCount[char]++;
         } else {
-          chunkStats.letterCount[char] = 1;
+          chunkStats.stats.letterCount[char] = 1;
         }
       }
     });

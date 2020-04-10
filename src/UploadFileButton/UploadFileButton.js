@@ -12,7 +12,7 @@ const onChangeHandler = (event) => {
 const UploadFileButton = props => {
     return (
         <>
-            <form enctype="multipart/form-data">
+            <form encType="multipart/form-data">
                 <input type="file" name="name" onChange={(e) => onChangeHandler(e)} />
             </form>
         </>
