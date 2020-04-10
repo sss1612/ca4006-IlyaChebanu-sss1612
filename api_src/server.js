@@ -10,28 +10,30 @@ import { Worker } from 'worker_threads';
 
 const app = express();
 
-store.dispatch(sharedStateActions.addToQueue({
-    filter: 'a-c',
-    wordsCount: {
-        anxious: 168,
-        bacon: 168,
-        collaborative: 168,
-        columns: 168,
-        consumed: 168,
-    },
-    taskId: 69,
-}));
-store.dispatch(sharedStateActions.removeFromQueue(69));
-store.dispatch(sharedStateActions.addToQueue({
-    filter: 'a-c',
-    wordsCount: {
-        anxious: 168,
-        bacon: 168,
-        collaborative: 168,
-        columns: 168,
-        consumed: 168,
-    }
-}));
+setTimeout(() => {
+    store.dispatch(sharedStateActions.addToQueue({
+        filter: 'a-c',
+        wordsCount: {
+            anxious: 168,
+            bacon: 168,
+            collaborative: 168,
+            columns: 168,
+            consumed: 168,
+        },
+        taskId: 69,
+    }));
+    store.dispatch(sharedStateActions.removeFromQueue(69));
+    store.dispatch(sharedStateActions.addToQueue({
+        filter: 'a-c',
+        wordsCount: {
+            anxious: 168,
+            bacon: 168,
+            collaborative: 168,
+            columns: 168,
+            consumed: 168,
+        }
+    }));
+}, 1000);
 
 const asyncWrappedWorker = (data, path) => new Promise((resolve, reject) => {
     const worker = new Worker(path);

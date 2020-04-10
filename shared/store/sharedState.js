@@ -9,6 +9,7 @@ export const ADD_TO_QUEUE = "sharedState/ADD_TO_QUEUE";
 export const REMOVE_FROM_QUEUE = "sharedState/REMOVE_FROM_QUEUE";
 export const SET_PROCESSING_ERROR = "sharedState/SET_PROCESSING_ERROR";
 export const CLEAR_PROCESSING_ERROR = "sharedState/CLEAR_PROCESSING_ERROR";
+export const NEW_FILE_ADDED = "sharedState/NEW_FILE_ADDED";
 
 
 // Selectors
@@ -39,6 +40,10 @@ export const actions = {
   }),
   clearProcessingError: () => ({
     type: CLEAR_PROCESSING_ERROR
+  }),
+  newFileAdded: (filename) => ({
+    type: NEW_FILE_ADDED,
+    payload: filename,
   }),
 }
 

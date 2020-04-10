@@ -60,11 +60,12 @@ const processQueue = async (lastTaskId = null) => {
 
     if (filename) {
       console.log('filename', filename);
+      store.dispatch(sharedStateActions.removeFromQueue(task.taskId));
+      store.dispatch(sharedStateActions.newFileAdded(filename));
     } else {
       console.log('cancelled task');
     }
 
-    store.dispatch(sharedStateActions.removeFromQueue(task.taskId));
     processQueue(task.taskId);
   } catch (error) {
     store.dispatch(sharedStateActions.setProcessingError(error));
