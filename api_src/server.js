@@ -1,19 +1,16 @@
 import "regenerator-runtime/runtime";
 import express from "express";
-import createSagaMiddleware from 'redux-saga';
-import configureStore from "./store/configureStore";
-import rootSaga from './store/rootSaga';
+import store from './store/store';
 import uploadRouter from "./endpoints/upload";
 
 import { actions as userUploadActions } from "../shared/store/userUpload";
+import { actions as sharedStateActions } from "../shared/store/sharedState";
 
 import { Worker } from 'worker_threads';
 
-const sagaMiddleware = createSagaMiddleware();
-const store = configureStore(sagaMiddleware);
-sagaMiddleware.run(rootSaga)
 const app = express();
 
+store.dispatch(sharedStateActions.addToQueue('test file'));
 
 const asyncWrappedWorker = (data, path) => new Promise((resolve, reject) => {
     const worker = new Worker(path);
