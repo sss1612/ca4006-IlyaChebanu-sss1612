@@ -5,7 +5,6 @@ import store from './store/store';
 import uploadRouter from "./endpoints/upload";
 import filterRouter from "./endpoints/filter";
 
-import { actions as userUploadActions } from "../shared/store/userUpload";
 import { actions as sharedStateActions } from "../shared/store/sharedState";
 
 
@@ -16,7 +15,7 @@ if (!fs.existsSync(uploadPath)) {
 }
 const files = fs.readdirSync(uploadPath);
 files.forEach(file => {
-    store.dispatch(userUploadActions.addNewFilename(file));
+    store.dispatch(sharedStateActions.addNewFilename(file));
 });
 
 

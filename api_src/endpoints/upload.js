@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import * as fs from "fs";
 import store from "../store/store";
-import { actions as userUploadActions } from "./../../shared/store/userUpload";
+import { actions as sharedStateActions } from "./../../shared/store/sharedState";
 
 const router = express.Router()
 
@@ -20,12 +20,12 @@ router.post("/upload", (req, res) => {
     } = req.file;
 
     const filePathname = `${uploadPath}/${filename}`
-    
+
     if (fs.existsSync(filePathname)) {
         res.status(400).send("Duplicate filenames disallowed")
     } else {
         fs.writeFile(filePathname, buffer, () => {});
-        store.dispatch(userUploadActions.addNewFilename(filename));
+        store.dispatch(sharedStateActions.addNewFilename(filename));
         res.sendStatus(204);
     }
 })

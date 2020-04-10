@@ -3,10 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 import { connect } from "react-redux";
 import FilterFieldsComponent from "./FilterFields/FilterFields";
-import { selectors as userUploadSelectors } from "../shared/store/userUpload";
 import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
 
-const App = ({message}) => {
+const App = () => {
   return (
     <div className="App">
       <header className="App-header">
@@ -22,7 +21,6 @@ const App = ({message}) => {
         >
           Learn React
         </a>
-          <p>{message}</p>
           <UploadButtonComponent/>
           <FilterFieldsComponent/>
       </header>
@@ -30,9 +28,7 @@ const App = ({message}) => {
   );
 }
 
-const mapStateToProps = state => ({
-  message: userUploadSelectors.getSuccessSelector(state),
-})
+const mapStateToProps = state => ({})
 
 // common practice I make mapDisPatchToProps null, just for the sake of clarity for arity(s)
 export default connect(mapStateToProps, null)(App);

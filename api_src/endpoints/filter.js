@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import store from "../store/store";
 import spawnWorker from "../utils/spawnWorker";
-import { actions as userUploadActions } from "../../shared/store/userUpload";
+import { actions as sharedStateActions } from "../../shared/store/sharedState";
 const router = express.Router()
 
 router.use((req, res, next) => {
@@ -20,7 +20,7 @@ router.post("/filter", async (req, res, next) => {
         const bodyData = req.body;
         const chunkStats = await spawnWorker(bodyData, `${__dirname}/../workers/metadataWorker.js`)
         res.send(`${Date.now()}: ayy lmao: done`)
-        store.dispatch(userUploadActions.addMetadata(chunkStats));
+        store.dispatch(sharedStateActions.addMetadata(chunkStats));
     } catch (error) {
         console.error(error);
         next(error);
