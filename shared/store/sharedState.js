@@ -3,9 +3,9 @@
 const initialState = {
   processingQueue: [],
   processingError: null,
-  uploadedFiles: {},
+  uploadedFiles: [],
   metaData: {},
-  outputFiles: {},
+  outputFiles: [],
   wordsCompleted: 0,
   timePerWord: 0.001,
   fileWritingOverhead: 0,
@@ -32,8 +32,8 @@ export const selectors = {
   getProcessingError: state => state.sharedState.processingError,
   getSuccessSelector: state => state.sharedState.success,
   getMetadataSelector: state => state.sharedState.metaData,
-  getUploadedFiles: state => Object.keys(state.sharedState.uploadedFiles),
-  getOutputFiles: state => Object.keys(state.sharedState.outputFiles),
+  getUploadedFiles: state => state.sharedState.uploadedFiles,
+  getOutputFiles: state => state.sharedState.outputFiles,
   getWordsCompleted: state => state.sharedState.wordsCompleted,
   getTimePerWord: state => state.sharedState.timePerWord,
   getFileWritingOverhead: state => state.sharedState.fileWritingOverhead,
@@ -148,19 +148,13 @@ export default function reducer(state=initialState, { type, payload }) {
     case (ADD_NEW_FILENAME): {
       return {
         ...state,
-        uploadedFiles: {
-          ...state.uploadedFiles,
-          [payload]: true,
-        }
+        uploadedFiles: [payload, ...state.uploadedFiles],
       };
     }
     case (NEW_FILE_ADDED): {
       return {
         ...state,
-        outputFiles: {
-          ...state.outputFiles,
-          [payload]: true,
-        }
+        outputFiles: [payload, ...state.outputFiles],
       };
     }
     case (ADD_METADATA): {

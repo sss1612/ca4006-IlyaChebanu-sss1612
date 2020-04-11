@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import './App.css';
 import { connect } from "react-redux";
+import { useDropzone } from 'react-dropzone';
 import FilterFieldsComponent from "./FilterFields/FilterFields";
 import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
 import RequestOutputButton from "./components/FileOutputRequestButton/FileOutputRequestButton";
@@ -9,6 +10,7 @@ import File from './components/File/File.component';
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
 
 import { requestOutputFile, cancelFileProcessing } from './api_lib/processing';
+import uploadFile from './api_lib/upload';
 
 const App = ({
   uploadedFiles,
@@ -38,17 +40,38 @@ const App = ({
     task.timeEstimate = (timePerWord * totalWordsPrior) + (fileWritingOverhead * task.totalWordCount);
   });
 
+  const onDrop = useCallback(files => {
+    files.forEach(async file => {
+      if (file.type === 'text/plain') {
+        const bodyData = new FormData();
+        bodyData.append("recfile", file);
+        console.log(file);
+        try {
+          const res = await uploadFile(bodyData);
+        } catch (e) {
+          // Duplicate file
+        }
+      } else {
+        // Display some error
+      }
+    })
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
   return (
     <div className="App-container">
       <div className="App">
         <p>
           Ilie and Stephen's epic file processor
         </p>
-        <UploadButtonComponent/>
         <FilterFieldsComponent/>
         <section>
-          <h2>Uploaded files</h2>
-          <div className="scroll-row">
+          <span className="upload-heading"><h2>Uploaded files</h2><UploadButtonComponent/></span>
+          <div
+            {...getRootProps({ onClick: e => e.stopPropagation() })}
+            className={`scroll-row ${isDragActive ? 'drop-ready' : ''}`}
+          >
+            <input {...getInputProps()}></input>
             {uploadedFiles.map(filename => (
               <File
                 filename={filename}
