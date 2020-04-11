@@ -37,7 +37,8 @@ router.post("/process", async (req, res, next) => {
     store.dispatch(sharedStateActions.addToQueue({
       originalFilename: filename,
       chunk,
-      filename: `${Math.random() * 10000 << 0}_${chunk || 'all'}_${filename}`
+      filename: `${Math.random() * 10000 << 0}_${chunk || 'all'}_${filename}`,
+      totalWordCount: chunkData.totalWordCount,
     }));
     res.status(202).send();
   } catch (error) {

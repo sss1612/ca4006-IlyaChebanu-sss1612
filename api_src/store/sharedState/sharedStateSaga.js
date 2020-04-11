@@ -78,7 +78,8 @@ const processQueue = async (lastTask = null) => {
 
   try {
     processingTaskFilename = task.filename;
-    const completed = await processChunk(metadata[task.originalFilename][task.chunk]);
+    const chunk = metadata[task.originalFilename][task.chunk];
+    const completed = await processChunk({ ...chunk, filename: task.filename });
     processingTaskFilename = null;
 
     if (completed) {
