@@ -4,7 +4,7 @@ import store from './store';
 
 let subscribedStores = [];
 
-const wss = new WebSocket.Server({ port: 7070 });
+const wss = new WebSocket.Server({ port: 9090 });
 
 wss.on('connection', ws => {
   ws.messageId = 0;

@@ -1,38 +1,61 @@
 import { parentPort } from 'worker_threads';
 import fs from 'fs';
+import { performance } from 'perf_hooks';
 
-const randomKey = obj => {
-  const keys = Object.keys(obj);
-  return keys[keys.length * Math.random() << 0];
-}
-
-parentPort.once('message', data => {
-  const words = { ...data.wordsCount };
-
-  const outputWords = [];
-
-  while (Object.keys(words).length > 0) {
-    const key = randomKey(words);
-    outputWords.push(key);
-    words[key] -= 1;
-    if (words[key] <= 0) {
-      delete words[key];
+/* taken and modified from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array */
+function fisherYates( array ){
+  var count = array.length,
+      randomnumber,
+      temp;
+  let lastTime = performance.now();
+  while( count ){
+    randomnumber = Math.random() * count-- | 0;
+    temp = array[count];
+    array[count] = array[randomnumber];
+    array[randomnumber] = temp
+    if (count % 10000 === 0) {
+      const currentTime = performance.now();
+      const time = currentTime - lastTime;
+      lastTime = currentTime;
+      parentPort.postMessage({ completed: false, words: array.length - count, tpw: time / 10000 });
     }
   }
+}
 
-  const filename = `${new Date().toISOString()}.dat`;
+parentPort.on('message', data => {
+  const words = { ...data.wordsCount };
+  const { filename } = data;
 
+  let completedWords = 0;
+
+  let keys = Object.keys(words);
+
+  const allWords = new Array(data.totalWordCount);
+  let i = 0;
+  keys.forEach(word => {
+    for (let j = 0; j < words[word]; j++) {
+      allWords[i] = word;
+      i++;
+    }
+  });
+
+  fisherYates(allWords);
+
+  const time = performance.now();
   try {
     const dir = `${__dirname}/../../../../output_files`;
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
-    fs.writeFileSync(`${dir}/${filename}`, outputWords.join(' '));
+    fs.writeFileSync(`${dir}/${filename}`, allWords.join(' '));
   } catch (error) {
     console.error(error);
   }
 
-  // console.log('yo')
 
-  parentPort.postMessage(filename);
+  parentPort.postMessage({
+    completed: true,
+    words: completedWords,
+    fileWritingOverhead: (performance.now() - time) / data.totalWordCount
+  });
 });

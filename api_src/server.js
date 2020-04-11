@@ -4,6 +4,8 @@ import express from "express";
 import store from './store/store';
 import uploadRouter from "./endpoints/upload";
 import filterRouter from "./endpoints/filter";
+import processingRouter from "./endpoints/processing";
+import bodyParser from "body-parser";
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
 
@@ -25,7 +27,8 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
-})
+});
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
     res.send(store.getState());
@@ -33,31 +36,7 @@ app.get("/", (req, res) => {
 
 app.use(uploadRouter);
 app.use(filterRouter);
+app.use(processingRouter);
 
 app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
 
-
-setTimeout(() => {
-    store.dispatch(sharedStateActions.addToQueue({
-        filter: 'a-c',
-        wordsCount: {
-            anxious: 168,
-            bacon: 168,
-            collaborative: 168,
-            columns: 168,
-            consumed: 168,
-        },
-        taskId: 69,
-    }));
-    store.dispatch(sharedStateActions.removeFromQueue(69));
-    store.dispatch(sharedStateActions.addToQueue({
-        filter: 'a-c',
-        wordsCount: {
-            anxious: 168,
-            bacon: 168,
-            collaborative: 168,
-            columns: 168,
-            consumed: 168,
-        }
-    }));
-}, 1000);

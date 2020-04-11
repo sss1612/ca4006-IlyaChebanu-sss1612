@@ -7,20 +7,40 @@ import {
 from "../../../shared/store/sharedState";
 import store from '../store';
 import { Worker } from 'worker_threads';
+import KalmanFilter from 'kalmanjs';
+
+
+const timePerWordKalman = new KalmanFilter({ R: 0.01, Q: 1 });
+const fileWritingOverheadKalman = new KalmanFilter({ R: 0.01, Q: 1 });
 
 let outputWorker;
-let processingTaskId;
+let processingTaskFilename;
 let processing = false;
+let processingQueue = [];
 
 const processChunk = (chunk) => new Promise((resolve, reject) => {
   outputWorker = new Worker(`${__dirname}/outputGenerator.worker.js`);
-  outputWorker.once('message', (filename) => {
-    resolve(filename);
+  let lastTime = new Date().getTime();
+  outputWorker.on('message', (data) => {
+    const currentTime = new Date().getTime();
+    // Update progress on redux every 250 ms or so
+    if (currentTime - lastTime > 100) {
+      store.dispatch(sharedStateActions.setTaskWordsCompleted(data.words));
+      store.dispatch(sharedStateActions.setTimePerWord(timePerWordKalman.filter(data.tpw)));
+      lastTime = currentTime;
+    }
+    if (data.completed) {
+      store.dispatch(sharedStateActions.setTaskWordsCompleted(0));
+      store.dispatch(sharedStateActions.setFileWritingOverhead(
+        fileWritingOverheadKalman.filter(data.fileWritingOverhead)
+      ));
+      resolve(true);
+    }
   });
-  outputWorker.once('error', error => {
+  outputWorker.on('error', error => {
     reject(error);
   });
-  outputWorker.once('exit', (code) => {
+  outputWorker.on('exit', (code) => {
     resolve();
   });
   outputWorker.postMessage(chunk);
@@ -30,23 +50,22 @@ const cancelChunkProcessing = async () => {
   await outputWorker.terminate();
 }
 
-const processQueue = async (lastTaskId = null) => {
+const processQueue = async (lastTask = null) => {
   processing = true;
-  const latestSharedState = store.getState().sharedState;
 
-  if (!latestSharedState.processingQueue.length) {
+  if (!processingQueue.length) {
     processing = false;
     return;
   }
 
-  let task = latestSharedState.processingQueue[0];
+  let task = processingQueue[0];
   /*
     Necessary because removeFromQueue action is asynchronous and so the store
     might not have updated by the time this gets called recursively
   */
-  if (task.taskId === lastTaskId) {
-    if (latestSharedState.processingQueue.length > 1) {
-      task = latestSharedState.processingQueue[1];
+  if (task.filename === lastTask) {
+    if (processingQueue.length > 1) {
+      task = processingQueue[1];
     } else {
       processing = false;
       return;
@@ -54,41 +73,43 @@ const processQueue = async (lastTaskId = null) => {
   }
 
   try {
-    processingTaskId = task.taskId;
-    const filename = await processChunk(task);
-    processingTaskId = null;
+    processingTaskFilename = task.filename;
+    const completed = await processChunk(task);
+    processingTaskFilename = null;
 
-    if (filename) {
-      console.log('filename', filename);
-      store.dispatch(sharedStateActions.removeFromQueue(task.taskId));
-      store.dispatch(sharedStateActions.newFileAdded(filename));
-    } else {
-      console.log('cancelled task');
+    if (completed) {
+      store.dispatch(sharedStateActions.removeFromQueue(task.filename));
+      store.dispatch(sharedStateActions.newFileAdded(task.filename));
     }
 
-    processQueue(task.taskId);
+    processQueue(task.filename);
   } catch (error) {
-    store.dispatch(sharedStateActions.setProcessingError(error));
+    console.error(error);
+    store.dispatch(sharedStateActions.setProcessingError(error.message));
   }
 };
 
 
-function* addToQueueSaga() {
+function* addToQueueSaga({ payload }) {
   try {
+    processingQueue.push(payload);
     if (processing) return;
     processQueue();
   } catch (error) {
-    yield put(sharedStateActions.setProcessingError(error));
+    console.error(error);
+    yield put(sharedStateActions.setProcessingError(error.message));
   }
 }
 
 function* removeFromQueueSaga({ type, payload }) {
   try {
-    if (payload === processingTaskId) {
+    processingQueue = processingQueue.filter(t => t.filename !== payload);
+    if (payload === processingTaskFilename) {
       yield call(cancelChunkProcessing);
     }
   } catch (error) {
-    yield put(sharedStateActions.setProcessingError(error));
+    console.error(error);
+    yield put(sharedStateActions.setProcessingError(error.message));
   }
 }
 
