@@ -3,7 +3,7 @@ import './App.css';
 import { connect } from "react-redux";
 import FilterFieldsComponent from "./FilterFields/FilterFields";
 import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
-
+import RequestOutputButton from "./components/FileOutputRequestButton/FileOutputRequestButton";
 import File from './components/File/File.component';
 
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
@@ -60,11 +60,9 @@ const App = ({
             ))}
           </div>
         </section>
-        <span>
-          {metadataList.map(item => (
-            <span onClick={() => {
-              requestOutputFile(...item.split(':'));
-            }}>{item}</span>
+        <span className="RequestOutputButtonWrapper">
+          {metadataList.map(filename => (
+            <RequestOutputButton key={filename} filename={filename} callBack={requestOutputFile} />
           ))}
         </span>
         <section>

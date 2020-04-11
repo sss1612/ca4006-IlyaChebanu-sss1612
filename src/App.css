@@ -39,6 +39,10 @@
   }
 }
 
+.RequestOutputButtonWrapper {
+  width:calc(100vw)!important;;
+}
+
 .scroll-row {
   display: flex;
   box-sizing: border-box;
