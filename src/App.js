@@ -8,7 +8,7 @@ import File from './components/File/File.component';
 
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
 
-import { requestOutputFile } from './api_lib/processing';
+import { requestOutputFile, cancelFileProcessing } from './api_lib/processing';
 
 const App = ({
   uploadedFiles,
@@ -75,7 +75,9 @@ const App = ({
                 filename={task.filename}
                 key={task.filename}
                 onDoubleClick={() => console.log('test')}
-                onDeleteButtonClick={() => console.log('yeetus deletus')}
+                onDeleteButtonClick={() => {
+                  cancelFileProcessing(task.filename);
+                }}
                 variant="yellow"
                 progress={i === 0 ? wordsCompleted / task.totalWordCount : 0}
                 timeEstimate={task.timeEstimate}

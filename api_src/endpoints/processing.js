@@ -42,4 +42,9 @@ router.post("/process", async (req, res, next) => {
   }
 });
 
+router.delete('/process', (req, res) => {
+  store.dispatch(sharedStateActions.removeFromQueue(req.query.filename));
+  res.status(202).send();
+});
+
 export default router;
