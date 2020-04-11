@@ -22,7 +22,7 @@ else {
 }
 
 synchronizer(store);
-synchronizer.subscribe('userUpload');
+synchronizer.subscribe('sharedState');
 
 sagaMiddleware.run(rootSaga);
 

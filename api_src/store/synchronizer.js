@@ -1,12 +1,25 @@
 import WebSocket from 'ws';
+import store from './store';
 
-const wss = new WebSocket.Server({ port: 7070 });
+
+let subscribedStores = [];
+
+const wss = new WebSocket.Server({ port: 9090 });
 
 wss.on('connection', ws => {
   ws.messageId = 0;
+  subscribedStores.forEach(storeName => {
+    const subStore = require(`../../shared/store/${storeName}`);
+    if (subStore.actions.setInitialState) {
+      ws.send(JSON.stringify({
+        messageId: ws.messageId,
+        data: subStore.actions.setInitialState(store.getState()[storeName]),
+      }));
+      ws.messageId++;
+    }
+  });
 });
 
-let subscribedStores = [];
 const synchronizer = store => next => action => {
   const actionNamespace = action.type.split('/')[0];
 

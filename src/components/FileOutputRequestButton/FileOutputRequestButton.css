@@ -1,0 +1,13 @@
+.Button-wrapper {
+    cursor: pointer;
+    height: calc(30px);
+    width: auto;
+    display: inline-block;
+    background-color: #1FA6D7;
+    border: 2px solid #3D6F80;
+    margin-left:20px;
+}
+.Button-wrapper > p {
+    margin-top:calc(-1vh * 0.5);
+    font-size: calc(100% - 10px);
+}

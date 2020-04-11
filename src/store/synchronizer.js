@@ -1,6 +1,6 @@
 let subscribedStores = [];
 const synchronizer = (store) => {
-  const ws = new WebSocket('ws://localhost:7070');
+  const ws = new WebSocket('ws://localhost:9090');
 
   ws.onmessage = e => {
     const message = JSON.parse(e.data);
