@@ -11,6 +11,7 @@ import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
 
 import { requestOutputFile, cancelFileProcessing } from './api_lib/processing';
 import uploadFile from './api_lib/upload';
+import { deleteInputFile, deleteOutputFile } from './api_lib/deleter';
 
 const App = ({
   uploadedFiles,
@@ -77,7 +78,7 @@ const App = ({
                 filename={filename}
                 key={filename}
                 onDoubleClick={() => console.log('test')}
-                onDeleteButtonClick={() => console.log('yeetus deletus')}
+                onDeleteButtonClick={() => deleteInputFile(filename)}
                 variant="blue"
               />
             ))}
@@ -101,6 +102,7 @@ const App = ({
                 }}
                 variant="yellow"
                 progress={i === 0 ? wordsCompleted / task.totalWordCount : 0}
+                loading={i === 0 && wordsCompleted === task.totalWordCount}
                 timeEstimate={task.timeEstimate}
               />
             ))}
@@ -114,7 +116,7 @@ const App = ({
                 filename={filename}
                 key={filename}
                 onDoubleClick={() => console.log('test')}
-                onDeleteButtonClick={() => console.log('yeetus deletus')}
+                onDeleteButtonClick={() => deleteOutputFile(filename)}
                 variant="green"
               />
             ))}

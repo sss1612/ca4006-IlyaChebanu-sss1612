@@ -4,7 +4,7 @@ import ToolTip from 'react-portal-tooltip';
 
 import './File.styles.css';
 
-const File = ({ filename, progress, onDoubleClick, onDeleteButtonClick, timeEstimate, variant = 'blue' }) => {
+const File = ({ filename, progress, onDoubleClick, onDeleteButtonClick, timeEstimate, loading=false, variant = 'blue' }) => {
   const [isTooltipActive, setIsTooltipActive] = useState(false);
   const fileRef = useRef();
 
@@ -34,6 +34,7 @@ const File = ({ filename, progress, onDoubleClick, onDeleteButtonClick, timeEsti
           {progress > 0 && progress < 1 && <span className="progress-bar">
             <span className="progress-bar-inner" style={{ width: `${Math.max(0, Math.min(100, progress * 100))}%`}}/>
           </span>}
+          {loading && <div class="lds-ring"><div></div><div></div><div></div><div></div></div>}
         </div>
         <span className="file-name">
           {filename}

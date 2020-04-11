@@ -1,6 +1,7 @@
 import { all, call, put, takeEvery } from 'redux-saga/effects'
 import {
   actions as sharedStateActions,
+  selectors as sharedStateSelectors,
   ADD_TO_QUEUE,
   REMOVE_FROM_QUEUE,
 }
@@ -16,7 +17,6 @@ const fileWritingOverheadKalman = new KalmanFilter({ R: 0.01, Q: 1 });
 let outputWorker;
 let processingTaskFilename;
 let processing = false;
-let processingQueue = [];
 
 const processChunk = (chunk) => new Promise((resolve, reject) => {
   outputWorker = new Worker(`${__dirname}/outputGenerator.worker.js`);
@@ -24,9 +24,11 @@ const processChunk = (chunk) => new Promise((resolve, reject) => {
   outputWorker.on('message', (data) => {
     const currentTime = new Date().getTime();
     // Update progress on redux every 250 ms or so
-    if (currentTime - lastTime > 100) {
+    if (currentTime - lastTime > 100 || data.shuffled) {
       store.dispatch(sharedStateActions.setTaskWordsCompleted(data.words));
-      store.dispatch(sharedStateActions.setTimePerWord(timePerWordKalman.filter(data.tpw)));
+      if (data.tpw) {
+        store.dispatch(sharedStateActions.setTimePerWord(timePerWordKalman.filter(data.tpw)));
+      }
       lastTime = currentTime;
     }
     if (data.completed) {
@@ -52,6 +54,8 @@ const cancelChunkProcessing = async () => {
 
 const processQueue = async (lastTask = null) => {
   processing = true;
+  const processingQueue = sharedStateSelectors.getProcessingQueue(store.getState());
+  const metadata = sharedStateSelectors.getMetadataSelector(store.getState());
 
   if (!processingQueue.length) {
     processing = false;
@@ -74,7 +78,7 @@ const processQueue = async (lastTask = null) => {
 
   try {
     processingTaskFilename = task.filename;
-    const completed = await processChunk(task);
+    const completed = await processChunk(metadata[task.originalFilename][task.chunk]);
     processingTaskFilename = null;
 
     if (completed) {
@@ -92,7 +96,6 @@ const processQueue = async (lastTask = null) => {
 
 function* addToQueueSaga({ payload }) {
   try {
-    processingQueue.push(payload);
     if (processing) return;
     processQueue();
   } catch (error) {
@@ -103,7 +106,6 @@ function* addToQueueSaga({ payload }) {
 
 function* removeFromQueueSaga({ type, payload }) {
   try {
-    processingQueue = processingQueue.filter(t => t.filename !== payload);
     if (payload === processingTaskFilename) {
       yield call(cancelChunkProcessing);
     }

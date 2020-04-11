@@ -41,6 +41,8 @@ parentPort.on('message', data => {
 
   fisherYates(allWords);
 
+  parentPort.postMessage({ completed: false, words: data.totalWordCount, shuffled: true, });
+
   const time = performance.now();
   try {
     const dir = `${__dirname}/../../../../output_files`;

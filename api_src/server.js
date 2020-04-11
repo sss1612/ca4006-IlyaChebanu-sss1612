@@ -5,6 +5,7 @@ import store from './store/store';
 import uploadRouter from "./endpoints/upload";
 import filterRouter from "./endpoints/filter";
 import processingRouter from "./endpoints/processing";
+import deleterRouter from "./endpoints/deleter";
 import bodyParser from "body-parser";
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
@@ -26,11 +27,6 @@ if (!fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath);
 }
 const outFiles = fs.readdirSync(outputPath);
-outFiles.sort((a, b) => {
-    const dateA = a.split('__')[1].slice(0, -4);
-    const dateB = b.split('__')[1].slice(0, -4);
-    return (new Date(dateA).getTime() - new Date(dateB).getTime());
-});
 outFiles.forEach(file => {
     store.dispatch(sharedStateActions.newFileAdded(file));
 });
@@ -54,6 +50,7 @@ app.get("/", (req, res) => {
 app.use(uploadRouter);
 app.use(filterRouter);
 app.use(processingRouter);
+app.use(deleterRouter);
 
 app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
 
