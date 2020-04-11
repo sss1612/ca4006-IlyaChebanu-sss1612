@@ -38,6 +38,8 @@ const App = ({
     task.timeEstimate = (timePerWord * totalWordsPrior) + (fileWritingOverhead * task.totalWordCount);
   });
 
+  console.log(generatedFiles);
+
   return (
     <div className="App-container">
       <div className="App">

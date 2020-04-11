@@ -20,6 +20,22 @@ files.forEach(file => {
     store.dispatch(sharedStateActions.addNewFilename(file));
 });
 
+const outputPath = `${__dirname.split("/api_dist")[0]}/output_files`;
+
+if (!fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath);
+}
+const outFiles = fs.readdirSync(outputPath);
+outFiles.sort((a, b) => {
+    const dateA = a.split('__')[1].slice(0, -4);
+    const dateB = b.split('__')[1].slice(0, -4);
+    return (new Date(dateA).getTime() - new Date(dateB).getTime());
+});
+outFiles.forEach(file => {
+    store.dispatch(sharedStateActions.newFileAdded(file));
+});
+
+
 
 const app = express();
 

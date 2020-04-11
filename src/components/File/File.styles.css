@@ -20,6 +20,12 @@
   border-radius: 5px;
   transition: box-shadow 50ms, transform 50ms;
   cursor: pointer;
+  animation: popIn 200ms forwards;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
 }
 
 .file:hover {
