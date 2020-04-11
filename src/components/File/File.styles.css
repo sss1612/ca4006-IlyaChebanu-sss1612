@@ -18,9 +18,9 @@
   padding: 5px;
   box-sizing: border-box;
   border-radius: 5px;
-  transition: box-shadow 50ms, transform 50ms;
   cursor: pointer;
-  animation: popIn 200ms forwards;
+  animation: popIn 200ms;
+  transition: box-shadow 50ms, transform 50ms;
 }
 
 @keyframes popIn {

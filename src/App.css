@@ -53,10 +53,16 @@
   background-color: rgba(0, 0, 0, 0.1);
   overflow-x: auto;
   min-height: 165px;
+  transition: box-shadow 50ms;
+  outline: none;
 }
 
 .scroll-row.reverse {
   flex-direction: row-reverse;
+}
+
+.scroll-row.drop-ready {
+  box-shadow: 0 0 3pt 2pt #61dafb;
 }
 
 div::-webkit-scrollbar {
@@ -89,4 +95,13 @@ h2 {
   font-size: 28px;
   font-weight: normal;
   margin: 10px 0;
+}
+
+.upload-heading {
+  display: flex;
+  align-items: center;
+}
+
+.upload-heading h2 {
+  margin-right: 20px;
 }
