@@ -9,8 +9,10 @@ import bodyParser from "body-parser";
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
 
-
-const uploadPath = `${__dirname.split("/api_dist")[0]}/uploads`;
+const slash = process.platform === "win32"
+    ?  "\\"
+    : "/"
+const uploadPath = `${__dirname.split(`${slash}api_dist`)[0]}${slash}uploads`;
 
 if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath);
