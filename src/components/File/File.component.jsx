@@ -42,7 +42,7 @@ const File = ({
           {progress > 0 && progress < 1 && <span className="progress-bar">
             <span className="progress-bar-inner" style={{ width: `${Math.max(0, Math.min(100, progress * 100))}%`}}/>
           </span>}
-          {loading && <div class="lds-ring"><div></div><div></div><div></div><div></div></div>}
+          {loading && <div className="lds-ring"><div></div><div></div><div></div><div></div></div>}
         </div>
         <span className="file-name">
           {filename}

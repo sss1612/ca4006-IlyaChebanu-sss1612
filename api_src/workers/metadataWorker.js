@@ -1,6 +1,11 @@
 import { parentPort } from 'worker_threads';
 import * as fs from "fs";
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+const slash = process.platform === "win32"
+    ?  "\\"
+    : "/"
+
 parentPort.once('message', bodyData => {
 
   const { filename, filter } = bodyData;
@@ -18,7 +23,7 @@ parentPort.once('message', bodyData => {
     const letterBoundary = alphabet.slice(index1, index2);
 
     // complete build path 
-  const uploadsFilePath = `${__dirname.split("/api_dist")[0]}/uploads/${filename}`;
+  const uploadsFilePath = `${__dirname.split(`${slash}api_dist`)[0]}${slash}uploads${slash}${filename}`;
   const filteredFileLines = fs.readFileSync(uploadsFilePath).toString().split("\n").filter(line => {
     const [, word] = line.split("\t");
     try {
