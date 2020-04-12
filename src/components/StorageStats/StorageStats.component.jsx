@@ -9,7 +9,6 @@ import './StorageStats.styles.css';
 const StorageStats = ({ usedDiskSpace, availableDiskSpace }) => {
   const availablePrior = availableDiskSpace - usedDiskSpace;
   const spaceRatio = usedDiskSpace / availablePrior;
-  console.log(spaceRatio);
   return (
     <div className="storage-stats-container">
       <h2>Used space: {(usedDiskSpace / 1000000).toFixed(3)} MB / {(availablePrior / 1000000).toFixed(3)} MB</h2>
