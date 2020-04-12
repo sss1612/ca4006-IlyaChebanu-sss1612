@@ -6,6 +6,7 @@ import FilterFieldsComponent from "./FilterFields/FilterFields";
 import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
 import RequestOutputButton from "./components/FileOutputRequestButton/FileOutputRequestButton";
 import File from './components/File/File.component';
+import StorageStats from './components/StorageStats/StorageStats.component';
 
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
 
@@ -122,6 +123,7 @@ const App = ({
             ))}
           </div>
         </section>
+        <StorageStats />
       </div>
     </div>
   );

@@ -9,6 +9,8 @@ import deleterRouter from "./endpoints/deleter";
 import bodyParser from "body-parser";
 import chokidar from 'chokidar';
 import path from 'path';
+import fsUtil from 'nodejs-fs-utils';
+import disk from 'diskusage';
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
 
@@ -30,17 +32,41 @@ if (!fs.existsSync(outputPath)) {
 const uploadWatcher = chokidar.watch(uploadPath, { ignored: /^\./, persistent: true });
 uploadWatcher.on('add', p => {
     store.dispatch(sharedStateActions.addNewFilename(path.basename(p)));
+    fsUtil.fsize(path.dirname(p), async (err, size) => {
+        if (err) return console.error(err);
+        store.dispatch(sharedStateActions.setUploadsFolderSize(size));
+        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+    });
 });
 uploadWatcher.on('unlink', p => {
     store.dispatch(sharedStateActions.removeUploadedFile(path.basename(p)));
+    fsUtil.fsize(path.dirname(p), async (err, size) => {
+        if (err) return console.error(err);
+        store.dispatch(sharedStateActions.setUploadsFolderSize(size));
+        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+    });
 });
 
 const outputWatcher = chokidar.watch(outputPath, { ignored: /^\./, persistent: true });
 outputWatcher.on('add', p => {
     store.dispatch(sharedStateActions.newFileAdded(path.basename(p)));
+    fsUtil.fsize(path.dirname(p), async (err, size) => {
+        if (err) return console.error(err);
+        store.dispatch(sharedStateActions.setOutputsFolderSize(size));
+        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+    });
 });
 outputWatcher.on('unlink', p => {
     store.dispatch(sharedStateActions.removeOutputFile(path.basename(p)));
+    fsUtil.fsize(path.dirname(p), async (err, size) => {
+        if (err) return console.error(err);
+        store.dispatch(sharedStateActions.setOutputsFolderSize(size));
+        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+    });
 });
 
 
