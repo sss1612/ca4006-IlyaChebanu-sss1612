@@ -32,12 +32,14 @@ if (!fs.existsSync(outputPath)) {
 const uploadWatcher = chokidar.watch(uploadPath, { ignored: /^\./, persistent: true });
 uploadWatcher.on('add', p => {
     store.dispatch(sharedStateActions.addNewFilename(path.basename(p)));
-    fsUtil.fsize(path.dirname(p), async (err, size) => {
-        if (err) return console.error(err);
-        store.dispatch(sharedStateActions.setUploadsFolderSize(size));
-        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
-        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
-    });
+    setTimeout(() => {
+        fsUtil.fsize(path.dirname(p), async (err, size) => {
+            if (err) return console.error(err);
+            store.dispatch(sharedStateActions.setUploadsFolderSize(size));
+            const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+        });
+    }, 500); // Needs a bit of time to catch up on the file system
 });
 uploadWatcher.on('unlink', p => {
     store.dispatch(sharedStateActions.removeUploadedFile(path.basename(p)));
@@ -52,12 +54,14 @@ uploadWatcher.on('unlink', p => {
 const outputWatcher = chokidar.watch(outputPath, { ignored: /^\./, persistent: true });
 outputWatcher.on('add', p => {
     store.dispatch(sharedStateActions.newFileAdded(path.basename(p)));
-    fsUtil.fsize(path.dirname(p), async (err, size) => {
-        if (err) return console.error(err);
-        store.dispatch(sharedStateActions.setOutputsFolderSize(size));
-        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
-        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
-    });
+    setTimeout(() => {
+        fsUtil.fsize(path.dirname(p), async (err, size) => {
+            if (err) return console.error(err);
+            store.dispatch(sharedStateActions.setOutputsFolderSize(size));
+            const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+        });
+    }, 500);
 });
 outputWatcher.on('unlink', p => {
     store.dispatch(sharedStateActions.removeOutputFile(path.basename(p)));
