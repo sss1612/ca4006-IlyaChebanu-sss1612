@@ -102,7 +102,7 @@ const App = ({
                 }}
                 variant="yellow"
                 progress={i === 0 ? wordsCompleted / task.totalWordCount : 0}
-                loading={i === 0 && wordsCompleted === task.totalWordCount}
+                loading={i === 0 && (wordsCompleted === 0 || wordsCompleted === task.totalWordCount)}
                 timeEstimate={task.timeEstimate}
               />
             ))}

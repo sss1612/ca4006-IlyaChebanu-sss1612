@@ -1,7 +1,6 @@
 import express from "express";
 import store from "../store/store";
 import {
-  actions as sharedStateActions,
   selectors as sharedStateSelectors,
 } from "../../shared/store/sharedState";
 import fs from 'fs';
@@ -21,7 +20,7 @@ router.delete("/input",  (req, res, next) => {
       console.error(err);
       return next(err);
     }
-    store.dispatch(sharedStateActions.removeUploadedFile(req.query.filename));
+    res.status(202).send();
   });
 });
 
@@ -37,7 +36,7 @@ router.delete('/output', (req, res, next) => {
       console.error(err);
       return next(err);
     }
-    store.dispatch(sharedStateActions.removeOutputFile(req.query.filename));
+    res.status(202).send();
   });
 });
 

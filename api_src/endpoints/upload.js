@@ -25,7 +25,6 @@ router.post("/upload", (req, res) => {
         res.status(400).send("Duplicate filenames disallowed")
     } else {
         fs.writeFile(filePathname, buffer, () => {});
-        store.dispatch(sharedStateActions.addNewFilename(filename));
         res.sendStatus(204);
     }
 })

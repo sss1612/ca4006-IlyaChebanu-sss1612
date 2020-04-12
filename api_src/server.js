@@ -7,28 +7,36 @@ import filterRouter from "./endpoints/filter";
 import processingRouter from "./endpoints/processing";
 import deleterRouter from "./endpoints/deleter";
 import bodyParser from "body-parser";
+import chokidar from 'chokidar';
+import path from 'path';
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
 
 
 const uploadPath = `${__dirname.split("/api_dist")[0]}/uploads`;
-
 if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath);
 }
-const files = fs.readdirSync(uploadPath);
-files.forEach(file => {
-    store.dispatch(sharedStateActions.addNewFilename(file));
-});
 
 const outputPath = `${__dirname.split("/api_dist")[0]}/output_files`;
-
 if (!fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath);
 }
-const outFiles = fs.readdirSync(outputPath);
-outFiles.forEach(file => {
-    store.dispatch(sharedStateActions.newFileAdded(file));
+
+const uploadWatcher = chokidar.watch(uploadPath, { ignored: /^\./, persistent: true });
+uploadWatcher.on('add', p => {
+    store.dispatch(sharedStateActions.addNewFilename(path.basename(p)));
+});
+uploadWatcher.on('unlink', p => {
+    store.dispatch(sharedStateActions.removeUploadedFile(path.basename(p)));
+});
+
+const outputWatcher = chokidar.watch(outputPath, { ignored: /^\./, persistent: true });
+outputWatcher.on('add', p => {
+    store.dispatch(sharedStateActions.newFileAdded(path.basename(p)));
+});
+outputWatcher.on('unlink', p => {
+    store.dispatch(sharedStateActions.removeOutputFile(path.basename(p)));
 });
 
 

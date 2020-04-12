@@ -4,7 +4,15 @@ import ToolTip from 'react-portal-tooltip';
 
 import './File.styles.css';
 
-const File = ({ filename, progress, onDoubleClick, onDeleteButtonClick, timeEstimate, loading=false, variant = 'blue' }) => {
+const File = ({
+  filename,
+  progress,
+  onDoubleClick,
+  onDeleteButtonClick,
+  timeEstimate,
+  loading=false,
+  variant = 'blue'
+}) => {
   const [isTooltipActive, setIsTooltipActive] = useState(false);
   const fileRef = useRef();
 

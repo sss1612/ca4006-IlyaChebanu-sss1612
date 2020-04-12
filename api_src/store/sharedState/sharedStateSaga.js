@@ -11,8 +11,8 @@ import { Worker } from 'worker_threads';
 import KalmanFilter from 'kalmanjs';
 
 
-const timePerWordKalman = new KalmanFilter({ R: 0.01, Q: 1 });
-const fileWritingOverheadKalman = new KalmanFilter({ R: 0.01, Q: 1 });
+const timePerWordKalman = new KalmanFilter({ R: 1, Q: 1 });
+const fileWritingOverheadKalman = new KalmanFilter({ R: 1, Q: 1 });
 
 let outputWorker;
 let processingTaskFilename;
@@ -84,7 +84,6 @@ const processQueue = async (lastTask = null) => {
 
     if (completed) {
       store.dispatch(sharedStateActions.removeFromQueue(task.filename));
-      store.dispatch(sharedStateActions.newFileAdded(task.filename));
     }
 
     processQueue(task.filename);
