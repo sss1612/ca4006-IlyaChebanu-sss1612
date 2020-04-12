@@ -5,6 +5,7 @@ const initialState = {
 }
 
 export const SET_CURRENT_SELECTED_UPLOAD_FILE = "windowState/SET_CURRENT_SELECTED_UPLOAD_FILE";
+export const DOWNLOAD_METADATA_JSON = "windowState/DOWNLOAD_METADATA_JSON";
 
 export const selectors = {
     getCurrentSelectedUploadedFileSelector: state => state.windowState.uploadedFiles.currentSelectedUploadFile,
@@ -31,5 +32,9 @@ export const actions = {
     setCurrentSelectedUploadedFile: filename => ({
         type: SET_CURRENT_SELECTED_UPLOAD_FILE,
         payload: filename,
+    }),
+    downloadMetadataJson: jsonData => ({
+        type: DOWNLOAD_METADATA_JSON,
+        payload: jsonData,
     })
 }

@@ -11,9 +11,18 @@ h2 > p {
     font-size: 12px;
 }
 
+tspan {
+    color:white;
+}
+
+#MyPieChart {
+    width:50%;
+    display:inline-block;
+}
+
 .pieChartWrapper {
-    padding-top:80px;
-    /* background-color:rgba(0, 128, 0, 0.171); */
+    width: 500px;
+    background-color:rgba(0, 128, 0, 0.471);
 }
 
 .FilterTabsWrapper {
@@ -49,6 +58,39 @@ h2 > p {
 .FilterTabPills:active {
     color: yellowgreen;
 }
+
+.FilterTableWrapper {
+    /* background-color:chocolate; */
+    width:200px;
+    display: inline-block;
+}
+
+.FilterFooter {
+    margin-left:30px;
+}
+
+table {
+    height:200px;
+    overflow: auto;
+    font-size:50%;
+    margin-top:20px;
+    margin-left:30px;
+    font-family: sans-serif;
+    border-collapse: collapse;
+    display: inline-block;
+    width: auto;
+    overflow-x: hidden;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd7a;
+  }
 
 .SmallText {
     font-size: 12px;

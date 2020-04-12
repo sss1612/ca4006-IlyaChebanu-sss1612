@@ -16,16 +16,22 @@ const onChangeHandler = (event, filterProps, setFilterProps) => {
     }
 }
 
+const validateFilterData = (object, callback) => {
+    const {filter} = object;
+    if (filter && filter.length === 3 && filter[1] === "-")
+        callback(object);
+}
+
 const FilterFields = props => {
     const { queryChunkSpecs } = props;
-    const [filterProps, setFilterProps] = useState({});
+    const [filterProps, setFilterProps] = useState({filter:null, filename: null});
 
     return (
         <>
             <p className={"filterParagraph"}>Enter the desired and filter</p>
             <input id={"filename"} placeholder={"file.txt"} onChange={e => onChangeHandler(e, filterProps, setFilterProps)}/>
             <input id={"filter"} placeholder={"a-c"} onChange={e => onChangeHandler(e, filterProps, setFilterProps)} />
-            <button onClick={() => queryChunkSpecs(filterProps)}>Send filter</button>
+            <button onClick={() => validateFilterData(filterProps, queryChunkSpecs)}>Send filter</button>
         </>
     )
 }
