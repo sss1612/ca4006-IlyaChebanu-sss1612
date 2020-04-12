@@ -51,10 +51,10 @@
   align-items: flex-start;
   border-radius: 40px;
   background-color: rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
   min-height: 165px;
   transition: box-shadow 50ms;
   outline: none;
+  flex-wrap: wrap;
 }
 
 .scroll-row.reverse {
