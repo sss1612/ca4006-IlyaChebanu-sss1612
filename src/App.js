@@ -6,7 +6,10 @@ import FilterFieldsComponent from "./FilterFields/FilterFields";
 import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
 import RequestOutputButton from "./components/FileOutputRequestButton/FileOutputRequestButton";
 import MetadataWindowComponent from "./components/MetadataWindow/MetadataWindow";
-import { actions as windowStateActions } from "./store/windowState/windowState";
+import {
+  actions as windowStateActions,
+  selectors as windowStateSelectors
+} from "./store/windowState/windowState";
 import File from './components/File/File.component';
 import StorageStats from './components/StorageStats/StorageStats.component';
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
@@ -32,7 +35,8 @@ const App = ({
   wordsCompleted,
   timePerWord,
   fileWritingOverhead,
-  setCurrentSelectedUploadedFile
+  setCurrentSelectedUploadedFile,
+  selectedFile
 }) => {
   const metadataList = [];
   Object.keys(metadata).forEach(filename => {
@@ -77,7 +81,6 @@ const App = ({
         <p>
           Ilie and Stephen's epic file processor
         </p>
-        <FilterFieldsComponent/>
         <section>
           <span className="upload-heading"><h2>Uploaded files</h2><UploadButtonComponent/></span>
           <div
@@ -92,10 +95,11 @@ const App = ({
                 onDoubleClick={() => setCurrentSelectedUploadedFile(filename)}
                 onDeleteButtonClick={() => deleteInputFile(filename)}
                 variant="blue"
+                active={selectedFile === filename}
               />
             ))}
           </div>
-          <MetadataWindowComponent metadataList={metadataList}/>
+          {selectedFile && <MetadataWindowComponent metadataList={metadataList}/>}
         </section>
         <section>
           <h2>Processing files</h2>
@@ -148,6 +152,7 @@ const mapStateToProps = state => ({
   wordsCompleted: sharedStateSelectors.getWordsCompleted(state),
   timePerWord: sharedStateSelectors.getTimePerWord(state),
   fileWritingOverhead: sharedStateSelectors.getFileWritingOverhead(state),
+  selectedFile: windowStateSelectors.getCurrentSelectedUploadedFileSelector(state),
 });
 
 // common practice I make mapDisPatchToProps null, just for the sake of clarity for arity(s)

@@ -11,6 +11,7 @@ const File = ({
   onDeleteButtonClick,
   timeEstimate,
   loading=false,
+  active=false,
   variant = 'blue'
 }) => {
   const [isTooltipActive, setIsTooltipActive] = useState(false);
@@ -27,7 +28,7 @@ const File = ({
   return (
     <>
       <div
-        className={`file ${variant}`}
+        className={`file ${variant} ${active ? 'active' : ''}`}
         tabIndex={0}
         onDoubleClick={onDoubleClick}
         ref={fileRef}
@@ -36,7 +37,10 @@ const File = ({
       >
         <div className="file-icon-container">
           <FileIcon className='file-icon'/>
-          <span className="file-delete" onClick={onDeleteButtonClick}>
+          <span className="file-delete" onClick={(e) => {
+            e.stopPropagation();
+            if (onDeleteButtonClick) onDeleteButtonClick(e);
+          }}>
             <span className='x-icon'>×</span>
           </span>
           {progress > 0 && progress < 1 && <span className="progress-bar">

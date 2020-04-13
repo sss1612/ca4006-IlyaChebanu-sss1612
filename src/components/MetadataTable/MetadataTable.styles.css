@@ -1,0 +1,16 @@
+.FilterTableWrapper {
+  flex: 1;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+#chartdiv {
+  flex: 1;
+}
+
+.FilterTableWrapper .text {
+  font-size: 24px;
+  /* margin-left: 20px; */
+  margin-bottom: 10px;
+}

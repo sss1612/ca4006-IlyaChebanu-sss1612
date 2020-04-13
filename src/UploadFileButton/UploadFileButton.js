@@ -6,7 +6,7 @@ import {
     actions as sharedStateActions,
     selectors as sharedStateSelectors
  } from "../../shared/store/sharedState";
-
+import axios from "axios";
 const onChangeHandler = (event) => {
     const [file] = event.target.files
     const body_data = new FormData()
@@ -23,7 +23,7 @@ const UploadFileButton = props => {
     return (
         <>
             <input type="file" name="name" onChange={(e) => onChangeHandler(e)} />
-            <button className={buttonOverrideClass} onClick={() => overrideSimulatedDiskSpace(!diskSimulationIsTrue)}>Simulate disk space full ({overrideButtonText})</button>
+            <button className={buttonOverrideClass} onClick={() => axios.post("http://localhost:8080/simulate", {flag: !diskSimulationIsTrue})}>Simulate disk space full ({overrideButtonText})</button>
         </>
     )
 }
@@ -36,4 +36,4 @@ const mapStateToProps = state => ({
     diskSimulationIsTrue: sharedStateSelectors.getForcedFullDiskSpaceIsTrue(state),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(UploadFileButton);
+export default connect(mapStateToProps, null)(UploadFileButton);

@@ -1,7 +1,7 @@
 import { parentPort } from 'worker_threads';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
-import axios from "axios";
+import checkDiskSpace from 'check-disk-space';
 
 /* taken and modified from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array */
 function fisherYates( array ){
@@ -22,10 +22,16 @@ function fisherYates( array ){
     }
   }
 }
-// store may not update on time
-const cache = { lastAvailableDiskSpace: null, fileSizes: [0] };
-parentPort.on('message', async (message) => {
-  const { data, availableDiskSpace } = message;
+
+
+const slash = process.platform === "win32"
+?  "\\"
+: "/"
+const uploadPath = `${__dirname.split(`${slash}api_dist`)[0]}${slash}uploads`;
+const outputPath = `${__dirname.split(`${slash}api_dist`)[0]}${slash}output_files`;
+const flagPathName = `${__dirname.split(`${slash}api_dist`)[0]}${slash}flag.txt`;
+
+parentPort.on('message',async data => {
   const words = { ...data.wordsCount };
   const { filename } = data;
 
@@ -52,10 +58,26 @@ parentPort.on('message', async (message) => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
-    const fileData = allWords.join(' ');
-    console.log(availableDiskSpace, "file size", fileData.length)
-    await axios.post("http://localhost:8080/outputsizetracker", {availableDiskSpace})
-    fs.writeFileSync(`${dir}/${filename}`, fileData);
+    const fileData =  allWords.join(' ');
+    var outputFolderDiskUsage;
+    var uploadFolderDiskUsage;
+
+    try {
+      outputFolderDiskUsage = await checkDiskSpace(outputPath);
+      uploadFolderDiskUsage = await checkDiskSpace(uploadPath);
+    } catch (error) {
+      // error
+    }
+    const diskSpace = 80000000;
+    const remainingDiskSpace = outputFolderDiskUsage + uploadFolderDiskUsage;
+    console.log("remainingDiskSpace", remainingDiskSpace,  "outputFolderDiskUsage",  outputFolderDiskUsage,  "uploadFolderDiskUsage",  uploadFolderDiskUsage);
+    const flagData = fs.readFileSync(flagPathName).toString(); 
+    console.log(`BOOL >${flagData}<`, flagData.includes("true"));
+    if (flagData.includes("false") && fileData.length < remainingDiskSpace)
+      fs.writeFileSync(`${dir}/${filename}`, fileData);
+    else {
+      parentPort.postMessage({error: "Insufficient space"})
+    }
   } catch (error) {
     console.error(error);
   }

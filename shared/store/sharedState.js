@@ -258,6 +258,7 @@ export default function reducer(state=initialState, { type, payload }) {
 
     case(FORCE_DISK_SPACE_FULL_SIMULATION): {
       const flag = payload;
+      console.log("flag >>> ", flag);
       return {
         ...state,
         simulateForcedFullDiskSpace: flag
