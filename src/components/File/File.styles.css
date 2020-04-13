@@ -32,7 +32,7 @@
   transform: scale(1.05);
 }
 
-.file:focus {
+.file:focus, .file.active {
   box-shadow: 0 0 3pt 2pt var(--color);
 }
 

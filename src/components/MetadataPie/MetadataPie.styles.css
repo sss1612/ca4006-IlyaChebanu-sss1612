@@ -1,0 +1,14 @@
+.PieChartWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#MyPieChart {
+  flex: 1;
+}
+
+.PieChartWrapper .text {
+  font-size: 24px;
+  margin-bottom: 10px;
+}

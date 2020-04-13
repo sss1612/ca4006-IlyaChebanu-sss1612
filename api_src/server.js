@@ -6,7 +6,6 @@ import uploadRouter from "./endpoints/upload";
 import filterRouter from "./endpoints/filter";
 import processingRouter from "./endpoints/processing";
 import deleterRouter from "./endpoints/deleter";
-import getFileRouter from "./endpoints/getFile";
 import bodyParser from "body-parser";
 import chokidar from 'chokidar';
 import path from 'path';
@@ -96,6 +95,5 @@ app.use(uploadRouter);
 app.use(filterRouter);
 app.use(processingRouter);
 app.use(deleterRouter);
-app.use(getFileRouter);
 app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
 
