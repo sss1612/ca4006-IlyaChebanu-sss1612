@@ -10,15 +10,7 @@ const sortingKey = (a, b) => {
     return b.count - a.count ;
 }
 var active_filter;
-const downloadMetadata = (exportObj, exportName) => {
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
-    var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href",     dataStr);
-    downloadAnchorNode.setAttribute("download", exportName + ".json");
-    document.body.appendChild(downloadAnchorNode); // required for firefox
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  }
+
 
 const FilterTabs = ({ filenameFilterData, metadata, currentSelectedFile }) => {
     const filterNames = Object.keys(filenameFilterData).filter(filterName => {
