@@ -48,7 +48,7 @@ const File = ({
           {filename}
         </span>
       </div>
-      {!!timeEstimate && <ToolTip active={isTooltipActive} arrow="left" parent={fileRef.current} align="right">
+      {!!timeEstimate && fileRef.current && <ToolTip active={isTooltipActive} arrow="left" parent={fileRef.current} align="right">
         <span>Estimated time remaining: {(timeEstimate / 1000).toFixed(4)} seconds</span>
       </ToolTip>}
     </>
