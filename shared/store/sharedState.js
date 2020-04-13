@@ -9,6 +9,9 @@ const initialState = {
   wordsCompleted: 0,
   timePerWord: 0.001,
   fileWritingOverhead: 0,
+  uploadsFolderSize: 0,
+  outputsFolderSize: 0,
+  availableDiskSpace: 20000000, // 20MB
 };
 
 
@@ -23,6 +26,11 @@ export const ADD_METADATA = "sharedState/ADD_METADATA";
 export const SET_TASK_WORDS_COMPLETED = "sharedState/SET_TASK_WORDS_COMPLETED";
 export const TIME_PER_WORD = "sharedState/TIME_PER_WORD";
 export const FILE_WRITING_OVERHEAD = "sharedState/FILE_WRITING_OVERHEAD";
+export const REMOVE_UPLOADED_FILE = "sharedState/REMOVE_UPLOADED_FILE";
+export const REMOVE_OUTPUT_FILE = "sharedState/REMOVE_OUTPUT_FILE";
+export const SET_UPLOADS_FOLDER_SIZE = "sharedState/SET_UPLOADS_FOLDER_SIZE";
+export const SET_OUTPUTS_FOLDER_SIZE = "sharedState/SET_OUTPUTS_FOLDER_SIZE";
+export const SET_AVAILABLE_DISK_SPACE = "sharedState/SET_AVAILABLE_DISK_SPACE";
 
 
 // Selectors
@@ -37,6 +45,8 @@ export const selectors = {
   getWordsCompleted: state => state.sharedState.wordsCompleted,
   getTimePerWord: state => state.sharedState.timePerWord,
   getFileWritingOverhead: state => state.sharedState.fileWritingOverhead,
+  getUsedStorage: state => state.sharedState.uploadsFolderSize + state.sharedState.outputsFolderSize,
+  getAvailableDiskSpace: state => state.sharedState.availableDiskSpace,
 }
 
 
@@ -45,10 +55,7 @@ export const selectors = {
 export const actions = {
   addToQueue: payload => ({
     type: ADD_TO_QUEUE,
-    payload: {
-      filename: `${Math.random() * 10000 << 0}__${new Date().toISOString()}.txt`,
-      ...payload,
-    }
+    payload,
   }),
   removeFromQueue: filename => ({
     type: REMOVE_FROM_QUEUE,
@@ -89,6 +96,26 @@ export const actions = {
     type: FILE_WRITING_OVERHEAD,
     payload: msPerWord,
   }),
+  removeUploadedFile: filename => ({
+    type: REMOVE_UPLOADED_FILE,
+    payload: filename,
+  }),
+  removeOutputFile: filename => ({
+    type: REMOVE_OUTPUT_FILE,
+    payload: filename,
+  }),
+  setUploadsFolderSize: bytes => ({
+    type: SET_UPLOADS_FOLDER_SIZE,
+    payload: bytes,
+  }),
+  setOutputsFolderSize: bytes => ({
+    type: SET_OUTPUTS_FOLDER_SIZE,
+    payload: bytes,
+  }),
+  setAvailableDiskSpace: bytes => ({
+    type: SET_AVAILABLE_DISK_SPACE,
+    payload: bytes,
+  }),
 }
 
 
@@ -96,12 +123,41 @@ export const actions = {
 
 export default function reducer(state=initialState, { type, payload }) {
   switch (type) {
+    case (REMOVE_UPLOADED_FILE): {
+      return {
+        ...state,
+        uploadedFiles: state.uploadedFiles.filter(f => f !== payload),
+      };
+    }
+    case (REMOVE_OUTPUT_FILE): {
+      return {
+        ...state,
+        outputFiles: state.outputFiles.filter(f => f !== payload),
+      };
+    }
+    case (SET_UPLOADS_FOLDER_SIZE): {
+      return {
+        ...state,
+        uploadsFolderSize: payload,
+      };
+    }
+    case (SET_OUTPUTS_FOLDER_SIZE): {
+      return {
+        ...state,
+        outputsFolderSize: payload,
+      };
+    }
+    case (SET_AVAILABLE_DISK_SPACE): {
+      return {
+        ...state,
+        availableDiskSpace: payload,
+      };
+    }
     case (ADD_TO_QUEUE): {
       return {
         ...state,
         processingQueue: [...state.processingQueue, {
-          filename: payload.filename,
-          totalWordCount: payload.totalWordCount,
+          ...payload,
           completedWords: 0
         }],
       };

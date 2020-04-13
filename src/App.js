@@ -8,11 +8,21 @@ import RequestOutputButton from "./components/FileOutputRequestButton/FileOutput
 import MetadataWindowComponent from "./components/MetadataWindow/MetadataWindow";
 import { actions as windowStateActions } from "./store/windowState/windowState";
 import File from './components/File/File.component';
-
+import StorageStats from './components/StorageStats/StorageStats.component';
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
 
 import { requestOutputFile, cancelFileProcessing } from './api_lib/processing';
 import uploadFile from './api_lib/upload';
+import { deleteInputFile, deleteOutputFile } from './api_lib/deleter';
+
+const downloadOutputFile = async filename => {
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     "http://localhost:8080/static/"+filename);
+    downloadAnchorNode.setAttribute("download", filename);
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
 
 const App = ({
   uploadedFiles,
@@ -80,7 +90,7 @@ const App = ({
                 filename={filename}
                 key={filename}
                 onDoubleClick={() => setCurrentSelectedUploadedFile(filename)}
-                onDeleteButtonClick={() => console.log(`feetus deletus >${filename}<`)}
+                onDeleteButtonClick={() => deleteInputFile(filename)}
                 variant="blue"
               />
             ))}
@@ -100,6 +110,7 @@ const App = ({
                 }}
                 variant="yellow"
                 progress={i === 0 ? wordsCompleted / task.totalWordCount : 0}
+                loading={i === 0 && (wordsCompleted === 0 || wordsCompleted === task.totalWordCount)}
                 timeEstimate={task.timeEstimate}
               />
             ))}
@@ -112,13 +123,14 @@ const App = ({
               <File
                 filename={filename}
                 key={filename}
-                onDoubleClick={() => console.log('test')}
-                onDeleteButtonClick={() => console.log('yeetus deletus')}
+                onDoubleClick={() => downloadOutputFile(filename)}
+                onDeleteButtonClick={() => deleteOutputFile(filename)}
                 variant="green"
               />
             ))}
           </div>
         </section>
+        <StorageStats />
       </div>
     </div>
   );
