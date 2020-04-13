@@ -13,6 +13,7 @@ var active_filter;
 
 
 const FilterTabs = ({ filenameFilterData, metadata, currentSelectedFile, currentFilterTabName, setCurrentFilterTabName }) => {
+  if (!filenameFilterData) return null;
   const filterNames = Object.keys(filenameFilterData).filter(filterName => {
     return !filterName.includes(".txt")
   })
@@ -47,6 +48,7 @@ const MetadataWindow = props => {
   const [currentFilterTabName, setCurrentFilterTabName] = useState();
 
   useEffect(() => {
+    if (!filenameFilterData) return;
     const filterNames = Object.keys(filenameFilterData).filter(filterName => {
       return !filterName.includes(".txt")
     });
@@ -78,17 +80,19 @@ const MetadataWindow = props => {
             <FilterTabs {...{ filenameFilterData, metadata, currentSelectedFile, currentFilterTabName, setCurrentFilterTabName }} />
           </div>
         </div>
-        {currentFilterTabName && <div className="metadata-window-content">
-          <div className="total-words">Total words in chunk: {metadata[currentSelectedFile][currentFilterTabName].totalWordCount}</div>
-          <div className="metadata-window-main">
-            <MetadataTable metadata={metadata} currentSelectedFile={currentSelectedFile} currentFilterTabName={currentFilterTabName}/>
-            <MetadataPie metadata={metadata} currentSelectedFile={currentSelectedFile} currentFilterTabName={currentFilterTabName}/>
+        {currentFilterTabName && <>
+          <div className="metadata-window-content">
+            <div className="total-words">Total words in chunk: {metadata[currentSelectedFile][currentFilterTabName].totalWordCount}</div>
+            <div className="metadata-window-main">
+              <MetadataTable metadata={metadata} currentSelectedFile={currentSelectedFile} currentFilterTabName={currentFilterTabName}/>
+              <MetadataPie metadata={metadata} currentSelectedFile={currentSelectedFile} currentFilterTabName={currentFilterTabName}/>
+            </div>
           </div>
-        </div>}
-        <div className="FilterFooter">
-          <button className="footer-button" onClick={() => { downloadJsonMetadata({ data: metadata[currentSelectedFile][active_filter], filename: currentSelectedFile }) }}>Download metadata</button>
-          <button className="footer-button" onClick={() => {requestOutputFile(currentSelectedFile, currentFilterTabName)}}>Generate output file</button>
-        </div>
+          <div className="FilterFooter">
+            <button className="footer-button" onClick={() => { downloadJsonMetadata({ data: metadata[currentSelectedFile][active_filter], filename: currentSelectedFile }) }}>Download metadata</button>
+            <button className="footer-button" onClick={() => {requestOutputFile(currentSelectedFile, currentFilterTabName)}}>Generate output file</button>
+          </div>
+        </>}
       </div>
     </div>
   )
