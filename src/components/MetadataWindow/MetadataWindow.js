@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import "./MetadataWindow.css"
 import { selectors as sharedSelectors } from "../../../shared/store/sharedState";
 import { selectors as windowStateSelectors, actions as windowStateActions } from "../../store/windowState/windowState";
-import RequestOutputButton from "../FileOutputRequestButton/FileOutputRequestButton";
 import { requestOutputFile } from '../../api_lib/processing';
 import MetadataTable from "../MetadataTable/MetadataTable.component";
 import MetadataPie from "../MetadataPie/MetadataPie.component";
@@ -42,7 +41,7 @@ const FilterTabs = ({ filenameFilterData, metadata, currentSelectedFile, current
 }
 
 const MetadataWindow = props => {
-  const { metadata, currentSelectedFile, downloadJsonMetadata, metadataList } = props;
+  const { metadata, currentSelectedFile, downloadJsonMetadata } = props;
 
   const filenameFilterData = metadata[currentSelectedFile];
   const [currentFilterTabName, setCurrentFilterTabName] = useState();

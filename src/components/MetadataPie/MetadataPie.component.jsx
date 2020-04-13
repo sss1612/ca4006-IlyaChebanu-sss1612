@@ -20,6 +20,7 @@ const MetadataPie = ({ metadata, currentSelectedFile, currentFilterTabName }) =>
       acc.push(charObject);
       return acc;
     }, [])
+    characterCountFilterData.sort((a, b) => b.count - a.count);
     // Pie chart
     // if (!currentSelectedFile in )
     const chart = am4core.create("MyPieChart", am4charts.PieChart);
