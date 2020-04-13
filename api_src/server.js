@@ -5,9 +5,15 @@ import store from './store/store';
 import uploadRouter from "./endpoints/upload";
 import filterRouter from "./endpoints/filter";
 import processingRouter from "./endpoints/processing";
+import deleterRouter from "./endpoints/deleter";
 import bodyParser from "body-parser";
+import chokidar from 'chokidar';
+import path from 'path';
+import fsUtil from 'nodejs-fs-utils';
+import disk from 'diskusage';
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
+
 
 const slash = process.platform === "win32"
     ?  "\\"
@@ -17,24 +23,54 @@ const uploadPath = `${__dirname.split(`${slash}api_dist`)[0]}${slash}uploads`;
 if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath);
 }
-const files = fs.readdirSync(uploadPath);
-files.forEach(file => {
-    store.dispatch(sharedStateActions.addNewFilename(file));
-});
 
-const outputPath = `${__dirname.split("/api_dist")[0]}/output_files`;
-
+const outputPath = `${__dirname.split(`${slash}api_dist`)[0]}${slash}output_files`;
 if (!fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath);
 }
-const outFiles = fs.readdirSync(outputPath);
-outFiles.sort((a, b) => {
-    const dateA = a.split('__')[1].slice(0, -4);
-    const dateB = b.split('__')[1].slice(0, -4);
-    return (new Date(dateA).getTime() - new Date(dateB).getTime());
+
+const uploadWatcher = chokidar.watch(uploadPath, { ignored: /^\./, persistent: true });
+uploadWatcher.on('add', p => {
+    store.dispatch(sharedStateActions.addNewFilename(path.basename(p)));
+    setTimeout(() => {
+        fsUtil.fsize(path.dirname(p), async (err, size) => {
+            if (err) return console.error(err);
+            store.dispatch(sharedStateActions.setUploadsFolderSize(size));
+            const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+        });
+    }, 500); // Needs a bit of time to catch up on the file system
 });
-outFiles.forEach(file => {
-    store.dispatch(sharedStateActions.newFileAdded(file));
+uploadWatcher.on('unlink', p => {
+    store.dispatch(sharedStateActions.removeUploadedFile(path.basename(p)));
+    fsUtil.fsize(path.dirname(p), async (err, size) => {
+        if (err) return console.error(err);
+        store.dispatch(sharedStateActions.setUploadsFolderSize(size));
+        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+    });
+});
+
+const outputWatcher = chokidar.watch(outputPath, { ignored: /^\./, persistent: true });
+outputWatcher.on('add', p => {
+    store.dispatch(sharedStateActions.newFileAdded(path.basename(p)));
+    setTimeout(() => {
+        fsUtil.fsize(path.dirname(p), async (err, size) => {
+            if (err) return console.error(err);
+            store.dispatch(sharedStateActions.setOutputsFolderSize(size));
+            const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+        });
+    }, 500);
+});
+outputWatcher.on('unlink', p => {
+    store.dispatch(sharedStateActions.removeOutputFile(path.basename(p)));
+    fsUtil.fsize(path.dirname(p), async (err, size) => {
+        if (err) return console.error(err);
+        store.dispatch(sharedStateActions.setOutputsFolderSize(size));
+        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+    });
 });
 
 
@@ -56,6 +92,7 @@ app.get("/", (req, res) => {
 app.use(uploadRouter);
 app.use(filterRouter);
 app.use(processingRouter);
+app.use(deleterRouter);
 
 app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
 

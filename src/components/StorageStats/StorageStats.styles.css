@@ -1,0 +1,17 @@
+.storage-stats-container {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.storage-stats-progress {
+  width: 100%;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.storage-stats-progress-inner {
+  background-color: white;
+  height: 20px;
+}
