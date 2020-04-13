@@ -2,8 +2,13 @@ import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
-const uploadFile = bodyData => {
-    return axios.post("/upload", bodyData);
+const uploadFile = async bodyData => {
+    var response;
+    try {
+        response = await axios.post("/upload", bodyData);
+    } catch (e) {
+        alert("Action could not be completed. Please do not reupload duplicate filenames or wait until server cache empties")
+    }
 }
 
 export default uploadFile;

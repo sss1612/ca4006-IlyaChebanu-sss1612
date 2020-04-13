@@ -7,12 +7,24 @@ import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
 import RequestOutputButton from "./components/FileOutputRequestButton/FileOutputRequestButton";
 import File from './components/File/File.component';
 import StorageStats from './components/StorageStats/StorageStats.component';
-
+import axios from "axios";
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
 
 import { requestOutputFile, cancelFileProcessing } from './api_lib/processing';
 import uploadFile from './api_lib/upload';
 import { deleteInputFile, deleteOutputFile } from './api_lib/deleter';
+
+// const downloadOutputFile = async filename => {
+//   const response = await axios.post("http://localhost:8080/getfile", {filename});
+//   const { data } = response;
+//   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(data);
+//     var downloadAnchorNode = document.createElement('a');
+//     downloadAnchorNode.setAttribute("href",     dataStr);
+//     downloadAnchorNode.setAttribute("download", filename);
+//     document.body.appendChild(downloadAnchorNode); // required for firefox
+//     downloadAnchorNode.click();
+//     downloadAnchorNode.remove();
+// }
 
 const App = ({
   uploadedFiles,
@@ -116,7 +128,7 @@ const App = ({
               <File
                 filename={filename}
                 key={filename}
-                onDoubleClick={() => console.log('test')}
+                onDoubleClick={() => downloadOutputFile(filename)}
                 onDeleteButtonClick={() => deleteOutputFile(filename)}
                 variant="green"
               />

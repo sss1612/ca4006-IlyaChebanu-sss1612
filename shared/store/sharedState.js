@@ -11,7 +11,7 @@ const initialState = {
   fileWritingOverhead: 0,
   uploadsFolderSize: 0,
   outputsFolderSize: 0,
-  availableDiskSpace: 0,
+  availableDiskSpace: 20000000, // 20MB
 };
 
 
