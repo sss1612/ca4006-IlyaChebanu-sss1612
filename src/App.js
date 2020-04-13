@@ -9,12 +9,20 @@ import MetadataWindowComponent from "./components/MetadataWindow/MetadataWindow"
 import { actions as windowStateActions } from "./store/windowState/windowState";
 import File from './components/File/File.component';
 import StorageStats from './components/StorageStats/StorageStats.component';
-
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
 
 import { requestOutputFile, cancelFileProcessing } from './api_lib/processing';
 import uploadFile from './api_lib/upload';
 import { deleteInputFile, deleteOutputFile } from './api_lib/deleter';
+
+const downloadOutputFile = async filename => {
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     "http://localhost:8080/static/"+filename);
+    downloadAnchorNode.setAttribute("download", filename);
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
 
 const App = ({
   uploadedFiles,
@@ -87,13 +95,8 @@ const App = ({
               />
             ))}
           </div>
-          <MetadataWindowComponent/>
+          <MetadataWindowComponent metadataList={metadataList}/>
         </section>
-        <span className="RequestOutputButtonWrapper">
-          {metadataList.map(filename => (
-            <RequestOutputButton key={filename} filename={filename} callBack={requestOutputFile} />
-          ))}
-        </span>
         <section>
           <h2>Processing files</h2>
           <div className="scroll-row">
@@ -120,7 +123,7 @@ const App = ({
               <File
                 filename={filename}
                 key={filename}
-                onDoubleClick={() => console.log('test')}
+                onDoubleClick={() => downloadOutputFile(filename)}
                 onDeleteButtonClick={() => deleteOutputFile(filename)}
                 variant="green"
               />

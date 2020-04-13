@@ -3,9 +3,10 @@ import "./FileOutputRequestButton.css";
 
 const ButtonComponent = (props) => {
     const { callBack: requestOutputFile, filename } = props
+    const [literalFilterName, filterName] = filename.split(":")
     return (
         <div className="Button-wrapper" onClick={()=>{requestOutputFile(...filename.split(':')) }}>
-            <p className="text-wrapper">{filename}</p>
+            <p className="text-wrapper">{literalFilterName}: [{filterName}]</p>
         </div>
     );
 }

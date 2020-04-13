@@ -6,11 +6,12 @@ import uploadRouter from "./endpoints/upload";
 import filterRouter from "./endpoints/filter";
 import processingRouter from "./endpoints/processing";
 import deleterRouter from "./endpoints/deleter";
+import getFileRouter from "./endpoints/getFile";
 import bodyParser from "body-parser";
 import chokidar from 'chokidar';
 import path from 'path';
 import fsUtil from 'nodejs-fs-utils';
-import disk from 'diskusage';
+import checkDiskSpace from 'check-disk-space';
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
 
@@ -36,7 +37,7 @@ uploadWatcher.on('add', p => {
         fsUtil.fsize(path.dirname(p), async (err, size) => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setUploadsFolderSize(size));
-            const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+            const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
             store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
         });
     }, 500); // Needs a bit of time to catch up on the file system
@@ -46,7 +47,7 @@ uploadWatcher.on('unlink', p => {
     fsUtil.fsize(path.dirname(p), async (err, size) => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setUploadsFolderSize(size));
-        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
         store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
     });
 });
@@ -58,7 +59,7 @@ outputWatcher.on('add', p => {
         fsUtil.fsize(path.dirname(p), async (err, size) => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setOutputsFolderSize(size));
-            const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+            const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
             store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
         });
     }, 500);
@@ -68,7 +69,7 @@ outputWatcher.on('unlink', p => {
     fsUtil.fsize(path.dirname(p), async (err, size) => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setOutputsFolderSize(size));
-        const { available } = await disk.check(process.platform === "win32" ? 'c:' : '/');
+        const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
         store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
     });
 });
@@ -85,6 +86,8 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.json());
 
+app.use('/static', express.static('output_files'))
+
 app.get("/", (req, res) => {
     res.send(store.getState());
 });
@@ -93,6 +96,6 @@ app.use(uploadRouter);
 app.use(filterRouter);
 app.use(processingRouter);
 app.use(deleterRouter);
-
+app.use(getFileRouter);
 app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
 

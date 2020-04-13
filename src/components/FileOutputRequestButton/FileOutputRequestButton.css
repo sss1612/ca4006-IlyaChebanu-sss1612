@@ -1,13 +1,23 @@
 .Button-wrapper {
-    cursor: pointer;
-    height: calc(30px);
+    background-color: rgba(124, 34, 34, 0.651)!important;
+    border: 1px solid rgba(201, 57, 57, 0.288);
+    box-shadow: 1px 1px;
+    color: red;
+    border-radius: 10px;
     width: auto;
-    display: inline-block;
-    background-color: #1FA6D7;
-    border: 2px solid #3D6F80;
-    margin-left:20px;
+    display:inline-block;
+    text-align: center;
+    margin-right:15px;
+    /* margin-bottom: 10px; */
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-top:-10px;
+    /* line-height: 1em; */
+    /* padding-bottom:-108px; */
+    cursor: pointer;
+    /* white-space: nowrap; */
 }
 .Button-wrapper > p {
-    margin-top:calc(-1vh * 0.5);
-    font-size: calc(100% - 10px);
+    /* margin-top:calc(-1vh * 0.5); */
+    font-size: calc(100% - 12px);
 }
