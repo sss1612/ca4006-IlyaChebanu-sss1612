@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { actions as queryActions } from "../store/query/query";
+import { selectors as windowStateSelectors } from "../store/windowState/windowState";
 
 const onChangeHandler = (event, filterProps, setFilterProps) => {
     const {
@@ -17,19 +18,24 @@ const onChangeHandler = (event, filterProps, setFilterProps) => {
 }
 
 const validateFilterData = (object, callback) => {
-    const {filter} = object;
-    if (filter && filter.length === 3 && filter[1] === "-")
+    const {filter, filename} = object;
+    if (filter && filename && filter.length === 3 && filter[1] === "-")
         callback(object);
 }
 
 const FilterFields = props => {
-    const { queryChunkSpecs } = props;
+    const { queryChunkSpecs, currentSelectedFile } = props;
     const [filterProps, setFilterProps] = useState({filter:null, filename: null});
+
+    // when selected file changes, update local prop
+    console.log("filterProps", filterProps)
+    useEffect(() => {
+        setFilterProps({...filterProps, filename: currentSelectedFile});
+    },[currentSelectedFile])
 
     return (
         <>
             <p className={"filterParagraph"}>Enter the desired and filter</p>
-            <input id={"filename"} placeholder={"file.txt"} onChange={e => onChangeHandler(e, filterProps, setFilterProps)}/>
             <input id={"filter"} placeholder={"a-c"} onChange={e => onChangeHandler(e, filterProps, setFilterProps)} />
             <button onClick={() => validateFilterData(filterProps, queryChunkSpecs)}>Send filter</button>
         </>
@@ -37,7 +43,11 @@ const FilterFields = props => {
 }
 
 const mapDispatchToProps = dispatch =>({
-    queryChunkSpecs: filterProps => dispatch(queryActions.queryFilter(filterProps))
+    queryChunkSpecs: filterProps => dispatch(queryActions.queryFilter(filterProps)),
   })
 
-export default connect(null, mapDispatchToProps)(FilterFields);
+const mapStateToProps = state => ({
+    currentSelectedFile: windowStateSelectors.getCurrentSelectedUploadedFileSelector(state)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(FilterFields);

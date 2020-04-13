@@ -1,5 +1,11 @@
 import React from "react";
+import { connect } from "react-redux";
 import uploadFile from "../api_lib/upload";
+import "./UploadFileButton.css"
+import {
+    actions as sharedStateActions,
+    selectors as sharedStateSelectors
+ } from "../../shared/store/sharedState";
 
 const onChangeHandler = (event) => {
     const [file] = event.target.files
@@ -10,7 +16,24 @@ const onChangeHandler = (event) => {
 }
 
 const UploadFileButton = props => {
-    return (<input type="file" name="name" onChange={(e) => onChangeHandler(e)} />)
+    const { diskSimulationIsTrue, overrideSimulatedDiskSpace } = props;
+    const overrideButtonText = diskSimulationIsTrue ? "on" : "off"
+    const buttonOverrideClass = diskSimulationIsTrue ? "DiskOverrideButton-on" : "DiskOverrideButton-off"
+
+    return (
+        <>
+            <input type="file" name="name" onChange={(e) => onChangeHandler(e)} />
+            <button className={buttonOverrideClass} onClick={() => overrideSimulatedDiskSpace(!diskSimulationIsTrue)}>Simulate disk space full ({overrideButtonText})</button>
+        </>
+    )
 }
 
-export default UploadFileButton;
+const mapDispatchToProps = dispatch => ({
+    overrideSimulatedDiskSpace: flag => dispatch(sharedStateActions.simulateForcedDiskSpace(flag))
+})
+
+const mapStateToProps = state => ({
+    diskSimulationIsTrue: sharedStateSelectors.getForcedFullDiskSpaceIsTrue(state),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UploadFileButton);

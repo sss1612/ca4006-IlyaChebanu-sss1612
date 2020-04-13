@@ -10,6 +10,7 @@ const router = express.Router()
 router.post("/process", async (req, res, next) => {
   try {
     const { filename, chunk } = req.body;
+    console.log("asdasdasdasdasd>>>>>>>>>>")
     const metadata = sharedStateSelectors.getMetadataSelector(store.getState());
 
     const file = metadata[filename];

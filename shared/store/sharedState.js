@@ -1,6 +1,7 @@
 
 // these arrays can be changed to objects or w/e to suit our needs
 const initialState = {
+  simulateForcedFullDiskSpace: false,
   processingQueue: [],
   processingError: null,
   uploadedFiles: [],
@@ -11,7 +12,7 @@ const initialState = {
   fileWritingOverhead: 0,
   uploadsFolderSize: 0,
   outputsFolderSize: 0,
-  availableDiskSpace: 20000000, // 20MB
+  availableDiskSpace: 80000000, // 80MB
 };
 
 
@@ -31,7 +32,8 @@ export const REMOVE_OUTPUT_FILE = "sharedState/REMOVE_OUTPUT_FILE";
 export const SET_UPLOADS_FOLDER_SIZE = "sharedState/SET_UPLOADS_FOLDER_SIZE";
 export const SET_OUTPUTS_FOLDER_SIZE = "sharedState/SET_OUTPUTS_FOLDER_SIZE";
 export const SET_AVAILABLE_DISK_SPACE = "sharedState/SET_AVAILABLE_DISK_SPACE";
-
+export const NOTIFY_USER_ERROR_MESSAGE = "sharedState/NOTIFY_USER_ERROR_MESSAGE";
+export const FORCE_DISK_SPACE_FULL_SIMULATION = "sharedState/FORCE_DISK_SPACE_FULL_SIMULATION";
 
 // Selectors
 
@@ -47,6 +49,7 @@ export const selectors = {
   getFileWritingOverhead: state => state.sharedState.fileWritingOverhead,
   getUsedStorage: state => state.sharedState.uploadsFolderSize + state.sharedState.outputsFolderSize,
   getAvailableDiskSpace: state => state.sharedState.availableDiskSpace,
+  getForcedFullDiskSpaceIsTrue: state => state.sharedState.simulateForcedFullDiskSpace,
 }
 
 
@@ -116,6 +119,14 @@ export const actions = {
     type: SET_AVAILABLE_DISK_SPACE,
     payload: bytes,
   }),
+  notifyUserErrorMessage: errorMessage => ({
+    type: NOTIFY_USER_ERROR_MESSAGE,
+    errorMessage
+  }),
+  simulateForcedDiskSpace: flag => ({
+    type: FORCE_DISK_SPACE_FULL_SIMULATION,
+    payload: flag,
+  })
 }
 
 
@@ -242,6 +253,14 @@ export default function reducer(state=initialState, { type, payload }) {
             }
           }
         }
+      }
+    }
+
+    case(FORCE_DISK_SPACE_FULL_SIMULATION): {
+      const flag = payload;
+      return {
+        ...state,
+        simulateForcedFullDiskSpace: flag
       }
     }
     default: {

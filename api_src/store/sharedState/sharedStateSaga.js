@@ -45,7 +45,8 @@ const processChunk = (chunk) => new Promise((resolve, reject) => {
   outputWorker.on('exit', (code) => {
     resolve();
   });
-  outputWorker.postMessage(chunk);
+
+  outputWorker.postMessage({data: chunk, availableDiskSpace: chunk.availableDiskSpace});
 });
 
 const cancelChunkProcessing = async () => {
@@ -79,14 +80,16 @@ const processQueue = async (lastTask = null) => {
   try {
     processingTaskFilename = task.filename;
     const chunk = metadata[task.originalFilename][task.chunk];
-    const completed = await processChunk({ ...chunk, filename: task.filename });
+    const currentDiskSpace = sharedStateSelectors.getUsedStorage(store.getState())
+    console.log(`>> ${currentDiskSpace}`)
+    const completed = await processChunk({ ...chunk, filename: task.filename, availableDiskSpace: currentDiskSpace});
     processingTaskFilename = null;
 
     if (completed) {
       store.dispatch(sharedStateActions.removeFromQueue(task.filename));
     }
 
-    processQueue(task.filename);
+    setTimeout(() => processQueue(task.filename), 250);
   } catch (error) {
     console.error(error);
     store.dispatch(sharedStateActions.setProcessingError(error.message));

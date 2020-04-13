@@ -1,6 +1,7 @@
 import { parentPort } from 'worker_threads';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
+import axios from "axios";
 
 /* taken and modified from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array */
 function fisherYates( array ){
@@ -21,8 +22,10 @@ function fisherYates( array ){
     }
   }
 }
-
-parentPort.on('message', data => {
+// store may not update on time
+const cache = { lastAvailableDiskSpace: null, fileSizes: [0] };
+parentPort.on('message', async (message) => {
+  const { data, availableDiskSpace } = message;
   const words = { ...data.wordsCount };
   const { filename } = data;
 
@@ -49,7 +52,10 @@ parentPort.on('message', data => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
-    fs.writeFileSync(`${dir}/${filename}`, allWords.join(' '));
+    const fileData = allWords.join(' ');
+    console.log(availableDiskSpace, "file size", fileData.length)
+    await axios.post("http://localhost:8080/outputsizetracker", {availableDiskSpace})
+    fs.writeFileSync(`${dir}/${filename}`, fileData);
   } catch (error) {
     console.error(error);
   }
