@@ -5,6 +5,8 @@ import { useDropzone } from 'react-dropzone';
 import FilterFieldsComponent from "./FilterFields/FilterFields";
 import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
 import RequestOutputButton from "./components/FileOutputRequestButton/FileOutputRequestButton";
+import MetadataWindowComponent from "./components/MetadataWindow/MetadataWindow";
+import { actions as windowStateActions } from "./store/windowState/windowState";
 import File from './components/File/File.component';
 import StorageStats from './components/StorageStats/StorageStats.component';
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
@@ -29,7 +31,8 @@ const App = ({
   metadata,
   wordsCompleted,
   timePerWord,
-  fileWritingOverhead
+  fileWritingOverhead,
+  setCurrentSelectedUploadedFile
 }) => {
   const metadataList = [];
   Object.keys(metadata).forEach(filename => {
@@ -86,18 +89,14 @@ const App = ({
               <File
                 filename={filename}
                 key={filename}
-                onDoubleClick={() => console.log('test')}
+                onDoubleClick={() => setCurrentSelectedUploadedFile(filename)}
                 onDeleteButtonClick={() => deleteInputFile(filename)}
                 variant="blue"
               />
             ))}
           </div>
+          <MetadataWindowComponent metadataList={metadataList}/>
         </section>
-        <span className="RequestOutputButtonWrapper">
-          {metadataList.map(filename => (
-            <RequestOutputButton key={filename} filename={filename} callBack={requestOutputFile} />
-          ))}
-        </span>
         <section>
           <h2>Processing files</h2>
           <div className="scroll-row">
@@ -137,6 +136,10 @@ const App = ({
   );
 }
 
+const mapDispatchToProps = dispatch => ({
+  setCurrentSelectedUploadedFile: filename => dispatch(windowStateActions.setCurrentSelectedUploadedFile(filename))
+})
+
 const mapStateToProps = state => ({
   uploadedFiles: sharedStateSelectors.getUploadedFiles(state),
   processingQueue: sharedStateSelectors.getProcessingQueue(state),
@@ -148,4 +151,4 @@ const mapStateToProps = state => ({
 });
 
 // common practice I make mapDisPatchToProps null, just for the sake of clarity for arity(s)
-export default connect(mapStateToProps, null)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

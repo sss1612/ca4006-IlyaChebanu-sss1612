@@ -1,8 +1,9 @@
 import { combineReducers  } from "redux";
 import sharedState from "../../shared/store/sharedState";
-
+import windowState from "./windowState/windowState";
 const rootReducer = combineReducers({
-    sharedState
+    sharedState,
+    windowState,
 });
 
 export default rootReducer;
