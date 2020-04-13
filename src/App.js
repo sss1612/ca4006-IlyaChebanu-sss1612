@@ -81,7 +81,6 @@ const App = ({
         <p>
           Ilie and Stephen's epic file processor
         </p>
-        <FilterFieldsComponent/>
         <section>
           <span className="upload-heading"><h2>Uploaded files</h2><UploadButtonComponent/></span>
           <div

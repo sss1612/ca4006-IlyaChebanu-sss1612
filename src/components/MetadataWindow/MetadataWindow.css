@@ -135,3 +135,33 @@ table {
 .metadata-window {
     margin-top: 40px;
 }
+
+.new-filter {
+    display: flex;
+    align-items: center;
+}
+
+.new-filter input {
+    width: 100px;
+    height: 30px;
+    border: none;
+    padding: 0 10px;
+    font-size: 18px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.new-filter button {
+    border: none;
+    background-color: #313842;
+    padding: 10px;
+    color: white;
+    border-radius: 10px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.new-filter button:hover {
+    background-color: #61dafb;
+    color: #23282f;
+}

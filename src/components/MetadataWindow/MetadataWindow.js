@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
 import "./MetadataWindow.css"
 import { selectors as sharedSelectors } from "../../../shared/store/sharedState";
@@ -7,6 +7,7 @@ import RequestOutputButton from "../FileOutputRequestButton/FileOutputRequestBut
 import { requestOutputFile } from '../../api_lib/processing';
 import MetadataTable from "../MetadataTable/MetadataTable.component";
 import MetadataPie from "../MetadataPie/MetadataPie.component";
+import { actions as queryActions } from '../../store/query/query';
 
 
 var active_filter;
@@ -54,9 +55,24 @@ const MetadataWindow = props => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSelectedFile]);
 
+  const filterInputRef = useRef();
+
   return (
     <div className="metadata-window">
-      <h2>Filters{" "}<p className="Smalltext"> (Select a filter to view its metadata)</p></h2>
+      <span className="upload-heading">
+        <h2>Filters{" "}<p className="Smalltext"> (Select a filter to view its metadata)</p></h2>
+        <div className="new-filter">
+          <input type="text" placeholder="a-c" ref={filterInputRef}/>
+          <button onClick={() => {
+            const filter = filterInputRef.current.value;
+            if (filter && filter.length === 3 && filter[1] === '-') {
+              props.queryChunkSpecs({ filter, filename: currentSelectedFile });
+            } else {
+              alert('Invalid filter format.');
+            }
+          }}>Request new filter</button>
+        </div>
+      </span>
       <div className="MetadataWindowWrapper">
         <div className="FilterTabsWrapper">
           <div className="FilterTabsFlexItem">
@@ -80,7 +96,8 @@ const MetadataWindow = props => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  downloadJsonMetadata: (obj) => dispatch(windowStateActions.downloadMetadataJson(obj))
+  downloadJsonMetadata: (obj) => dispatch(windowStateActions.downloadMetadataJson(obj)),
+  queryChunkSpecs: filterProps => dispatch(queryActions.queryFilter(filterProps))
 })
 
 const mapStateToPRops = state => ({
