@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import "./MetadataWindow.css"
 import { selectors as sharedSelectors } from "../../../shared/store/sharedState";
 import { selectors as windowStateSelectors, actions as windowStateActions } from "../../store/windowState/windowState";
+import RequestOutputButton from "../FileOutputRequestButton/FileOutputRequestButton";
+import { requestOutputFile } from '../../api_lib/processing';
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
@@ -44,6 +46,11 @@ const FilterTabs = ({ filenameFilterData, metadata, currentSelectedFile }) => {
         const pieSeries = chart.series.push(new am4charts.PieSeries());
         pieSeries.dataFields.value = "count";
         pieSeries.dataFields.category = "character";
+        
+        // experimental
+        pieSeries.labels.template.disabled = true;
+        pieSeries.ticks.template.disabled = true;
+        // experimental
         
     }, [currentFilterTabName, currentSelectedFile, metadata]);
     const wontCrash = (currentFilterTabName in metadata[currentSelectedFile]);
@@ -95,7 +102,7 @@ const FilterTabs = ({ filenameFilterData, metadata, currentSelectedFile }) => {
 }
 
 const MetadataWindow = props => {
-    const { metadata, currentSelectedFile, downloadJsonMetadata } = props;
+    const { metadata, currentSelectedFile, downloadJsonMetadata, metadataList } = props;
     const filenameFilterData = metadata[currentSelectedFile];
     
     
@@ -107,12 +114,25 @@ const MetadataWindow = props => {
             <h2>Filters{" "}<p className="Smalltext"> (Select a filter to view its metadata)</p></h2>
             <div className="MetadataWindowWrapper">
                 <div className="FilterTabsWrapper">
-                    <FilterTabs {...{filenameFilterData, metadata, currentSelectedFile}} />
-                    <div id="MyPieChart"/>
+                    <div className="FilterTabsFlexItem">
+                        <FilterTabs {...{filenameFilterData, metadata, currentSelectedFile}} />
+                    </div>
+                    <div className="FilterTabsFlexItem">
+                        <div className="PieChartWrapper">
+                            <div id="MyPieChart"/>
+                        </div>
+                    </div>
+
                 </div>
                 <div className="FilterFooter">
                     <p className="FilterMetrics">File: {currentSelectedFile}</p>
                     <button className="FilterTabPills" onClick={() => {downloadJsonMetadata({data:metadata[currentSelectedFile][active_filter], filename: currentSelectedFile})}}>Download metadata</button>
+                </div>
+                    <p id="shitex">Request file for processing below</p>
+                <div className="ProcessMetadataRequestWrapper">
+                    {metadataList.map(filename => (
+                        <RequestOutputButton key={filename} filename={filename} callBack={requestOutputFile} />
+                    ))}
                 </div>
             </div>
         </>

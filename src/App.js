@@ -85,13 +85,8 @@ const App = ({
               />
             ))}
           </div>
-          <MetadataWindowComponent/>
+          <MetadataWindowComponent metadataList={metadataList}/>
         </section>
-        <span className="RequestOutputButtonWrapper">
-          {metadataList.map(filename => (
-            <RequestOutputButton key={filename} filename={filename} callBack={requestOutputFile} />
-          ))}
-        </span>
         <section>
           <h2>Processing files</h2>
           <div className="scroll-row">

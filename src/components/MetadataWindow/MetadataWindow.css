@@ -28,9 +28,12 @@ tspan {
 .FilterTabsWrapper {
     /* border-bottom: 5px solid rgba(255, 0, 0, 0.404); */
     padding-bottom: 10px;
-    /* background-color:rgba(0, 0, 255, 0.326); */
+    display: flex;
 }
-
+.FilterTabsFlexItem {
+    flex: 1;
+    justify-content: center;
+}
 
 .FilterTabs {
     /* background-color: red; */
@@ -40,6 +43,19 @@ tspan {
     /* height: 10vh; */
     /* overflow: scroll; */
 
+}
+
+.ProcessMetadataRequestWrapper {
+    margin-left :30px;
+    margin-top: 10px;
+    padding-bottom:30px;
+}
+
+
+.PieChartWrapper {
+    height: 300px;
+    width:300px;
+    margin-top:150px;
 }
 
 .FilterTabPills {
@@ -61,8 +77,9 @@ tspan {
 
 .FilterTableWrapper {
     /* background-color:chocolate; */
-    width:200px;
-    display: inline-block;
+    width:auto;
+    text-align: center;
+    /* justify-content: space-evenly; */
 }
 
 .FilterFooter {
@@ -91,6 +108,12 @@ table {
   tr:nth-child(even) {
     background-color: #dddddd7a;
   }
+
+#shitex {
+    margin-left:30px;
+    /* color:brown!important; */
+    font-size:16px;
+}
 
 .SmallText {
     font-size: 12px;
