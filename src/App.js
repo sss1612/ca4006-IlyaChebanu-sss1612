@@ -67,7 +67,6 @@ const App = ({
       if (file.type === 'text/plain') {
         const bodyData = new FormData();
         bodyData.append("recfile", file);
-        console.log(file);
         try {
           const res = await uploadFile(bodyData);
         } catch (e) {

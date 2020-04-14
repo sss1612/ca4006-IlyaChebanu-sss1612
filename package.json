@@ -20,6 +20,7 @@
     "check-disk-space": "^2.1.0",
     "chokidar": "^3.3.1",
     "classnames": "^2.2.6",
+    "cross-env": "^7.0.2",
     "express": "^4.17.1",
     "kalmanjs": "^1.1.0",
     "lodash": "^4.17.15",
@@ -38,9 +39,10 @@
   },
   "scripts": {
     "api": "nodemon --watch api_src --exec 'npx babel shared -d api_dist/shared && npx babel api_src -d api_dist/server/ && node api_dist/server/server.js'",
+    "everything": "npm run build && npx babel shared -d api_dist/shared && npx babel api_src -d api_dist/server/ && npx cross-env DISK_LIMIT=300000000 nodemon api_dist/server/server.js",
+    "only-api": "npx babel shared -d api_dist/shared && npx babel api_src -d api_dist/server/ && npx cross-env DISK_LIMIT=30000000 nodemon api_dist/server/server.js",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

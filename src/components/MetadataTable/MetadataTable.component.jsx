@@ -25,6 +25,7 @@ const MetadataTable = ({ metadata, currentSelectedFile, currentFilterTabName }) 
     chart.data = filterWordCountObjectArray.slice(0, 20);
     chart.fontSize = 18;
 
+
     let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.dataFields.category = "word";
     categoryAxis.renderer.grid.template.location = 0;

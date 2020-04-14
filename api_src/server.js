@@ -6,6 +6,7 @@ import uploadRouter from "./endpoints/upload";
 import filterRouter from "./endpoints/filter";
 import processingRouter from "./endpoints/processing";
 import deleterRouter from "./endpoints/deleter";
+import simulateRouter from "./endpoints/simulate";
 import bodyParser from "body-parser";
 import chokidar from 'chokidar';
 import path from 'path';
@@ -36,8 +37,12 @@ uploadWatcher.on('add', p => {
         fsUtil.fsize(path.dirname(p), async (err, size) => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setUploadsFolderSize(size));
-            const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+            try {
+                const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+            } catch (e) {
+                //
+            }
         });
     }, 500); // Needs a bit of time to catch up on the file system
 });
@@ -46,8 +51,12 @@ uploadWatcher.on('unlink', p => {
     fsUtil.fsize(path.dirname(p), async (err, size) => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setUploadsFolderSize(size));
-        const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+        try {
+            const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+        } catch (e) {
+            //
+        }
     });
 });
 
@@ -58,8 +67,12 @@ outputWatcher.on('add', p => {
         fsUtil.fsize(path.dirname(p), async (err, size) => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setOutputsFolderSize(size));
-            const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+            try {
+                const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+            } catch (e) {
+                //
+            }
         });
     }, 500);
 });
@@ -68,8 +81,12 @@ outputWatcher.on('unlink', p => {
     fsUtil.fsize(path.dirname(p), async (err, size) => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setOutputsFolderSize(size));
-        const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-        store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+            try {
+                const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+            } catch (e) {
+                //
+            }
     });
 });
 
@@ -91,9 +108,11 @@ app.get("/", (req, res) => {
     res.send(store.getState());
 });
 
+app.use("/app", express.static("build"))
 app.use(uploadRouter);
 app.use(filterRouter);
 app.use(processingRouter);
 app.use(deleterRouter);
-app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
+app.use(simulateRouter);
+app.listen("8080", () => console.log("Please visit http://localhost:8080/app in your browser!"));
 

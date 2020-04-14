@@ -26,14 +26,18 @@ router.post("/upload", (req, res) => {
 
     const filePathname = `${uploadPath}/${filename}`
     const state = store.getState();
-    const baseAvaialableDiskspace = sharedStateSelectors.getAvailableDiskSpace(state);
+    const baseAvailableDiskSpace = sharedStateSelectors.getAvailableDiskSpace(state);
     const usedStorage = sharedStateSelectors.getUsedStorage(state);
-    if(rejectUploads || (baseAvaialableDiskspace + uploadFileSize > baseAvaialableDiskspace)) {
-        res.status(402).send("Disk quota exceeded")
-    }
 
+    if(rejectUploads || (usedStorage + uploadFileSize > baseAvailableDiskSpace)) {
+        res.status(204);
+        store.dispatch(sharedStateActions.notifyUserErrorMessage("disk quota exceeded. Delete files from storage"))
+        return
+    }
+    
     if (fs.existsSync(filePathname)) {
-        res.status(400).send("Duplicate filenames disallowed")
+        res.status(204).send()
+        store.dispatch(sharedStateActions.notifyUserErrorMessage("Duplicate filenames disallowed"))
     } else {
         fs.writeFile(filePathname, buffer, () => {});
         res.sendStatus(204);
