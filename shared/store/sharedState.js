@@ -12,7 +12,7 @@ const initialState = {
   fileWritingOverhead: 0,
   uploadsFolderSize: 0,
   outputsFolderSize: 0,
-  availableDiskSpace: process.env.DISK_LIMIT, // 80MB
+  availableDiskSpace: process.env.DISK_LIMIT,
 };
 
 

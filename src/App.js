@@ -18,6 +18,7 @@ import uploadFile from './api_lib/upload';
 import { deleteInputFile, deleteOutputFile } from './api_lib/deleter';
 import store from './store/store';
 import { selectors as initialStateSelectors } from './store/initialLoadingState/initialLoadingState';
+import axios from 'axios';
 
 const randInt = (n) => Math.random() * n << 0;
 
@@ -42,6 +43,7 @@ const App = ({
   selectedFile,
   queryChunkSpecs,
   isLoading,
+  diskSimulationIsTrue,
 }) => {
   const metadataList = [];
   Object.keys(metadata).forEach(filename => {
@@ -202,6 +204,12 @@ const App = ({
                 >
                   Simulate random events
                 </button>
+                <button
+                  className={`simulation-button ${diskSimulationIsTrue ? 'active' : ''}`}
+                  onClick={() => axios.post("http://localhost:8080/simulate", {flag: !diskSimulationIsTrue})}
+                >
+                  Simulate disk space full
+                </button>
               </section>
           </>
         }
@@ -225,6 +233,7 @@ const mapStateToProps = state => ({
   fileWritingOverhead: sharedStateSelectors.getFileWritingOverhead(state),
   selectedFile: windowStateSelectors.getCurrentSelectedUploadedFileSelector(state),
   isLoading: initialStateSelectors.getLoadingState(state),
+  diskSimulationIsTrue: sharedStateSelectors.getForcedFullDiskSpaceIsTrue(state),
 });
 
 // common practice I make mapDisPatchToProps null, just for the sake of clarity for arity(s)
