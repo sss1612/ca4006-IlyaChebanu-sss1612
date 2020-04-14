@@ -133,12 +133,14 @@ export const actions = {
 // Reducer
 
 export default function reducer(state=initialState, { type, payload }) {
-  // (state.sharedState.availableDiskSpace)
   switch (type) {
     case (REMOVE_UPLOADED_FILE): {
+      const metadata = { ...state.metaData };
+      delete metadata[payload];
       return {
         ...state,
         uploadedFiles: state.uploadedFiles.filter(f => f !== payload),
+        metaData: metadata
       };
     }
     case (REMOVE_OUTPUT_FILE): {

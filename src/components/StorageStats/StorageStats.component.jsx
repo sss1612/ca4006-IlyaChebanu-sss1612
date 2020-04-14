@@ -7,7 +7,6 @@ import {
 import './StorageStats.styles.css';
 
 const StorageStats = ({ usedDiskSpace, availableDiskSpace }) => {
-  const availablePrior = availableDiskSpace - usedDiskSpace;
   const spaceRatio = usedDiskSpace / availableDiskSpace;
   return (
     <div className="storage-stats-container">

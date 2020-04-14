@@ -1,3 +1,5 @@
+import { REMOVE_UPLOADED_FILE } from '../../../shared/store/sharedState';
+
 const initialState = {
     uploadedFiles: {
         currentSelectedUploadFile: undefined,
@@ -21,6 +23,14 @@ export default function reducer (state=initialState, action) {
                     currentSelectedUploadFile: filename,
                 }
             };
+        }
+        case (REMOVE_UPLOADED_FILE): {
+            return {
+                ...state,
+                uploadedFiles: {
+                    currentSelectedUploadFile: action.payload === state.uploadedFiles.currentSelectedUploadFile ? null : state.uploadedFiles.currentSelectedUploadFile
+                }
+            }
         }
         default: {
             return state;

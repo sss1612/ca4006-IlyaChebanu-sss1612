@@ -69,13 +69,9 @@ const App = ({
       if (file.type === 'text/plain') {
         const bodyData = new FormData();
         bodyData.append("recfile", file);
-        try {
-          const res = await uploadFile(bodyData);
-        } catch (e) {
-          // Duplicate file
-        }
+        await uploadFile(bodyData);
       } else {
-        // Display some error
+        alert('Only plaintext files are supported.');
       }
     })
   }, []);

@@ -32,13 +32,14 @@ const MetadataTable = ({ metadata, currentSelectedFile, currentFilterTabName }) 
     categoryAxis.renderer.minGridDistance = 30;
 
     categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
+      // eslint-disable-next-line no-self-compare
       if (target.dataItem && target.dataItem.index & 2 == 2) {
         return dy + 25;
       }
       return dy;
     });
 
-    let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    chart.yAxes.push(new am4charts.ValueAxis());
 
     // Create series
     let series = chart.series.push(new am4charts.ColumnSeries());
