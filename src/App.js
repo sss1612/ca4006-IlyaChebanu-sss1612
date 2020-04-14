@@ -1,10 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import './App.css';
 import { connect } from "react-redux";
 import { useDropzone } from 'react-dropzone';
-import FilterFieldsComponent from "./FilterFields/FilterFields";
 import UploadButtonComponent from "./UploadFileButton/UploadFileButton";
-import RequestOutputButton from "./components/FileOutputRequestButton/FileOutputRequestButton";
 import MetadataWindowComponent from "./components/MetadataWindow/MetadataWindow";
 import {
   actions as windowStateActions,
@@ -13,10 +11,14 @@ import {
 import File from './components/File/File.component';
 import StorageStats from './components/StorageStats/StorageStats.component';
 import { selectors as sharedStateSelectors } from '../shared/store/sharedState';
+import { actions as queryActions } from './store/query/query';
 
-import { requestOutputFile, cancelFileProcessing } from './api_lib/processing';
+import { cancelFileProcessing, requestOutputFile } from './api_lib/processing';
 import uploadFile from './api_lib/upload';
 import { deleteInputFile, deleteOutputFile } from './api_lib/deleter';
+import store from './store/store';
+
+const randInt = (n) => Math.random() * n << 0;
 
 const downloadOutputFile = async filename => {
     var downloadAnchorNode = document.createElement('a');
@@ -36,7 +38,8 @@ const App = ({
   timePerWord,
   fileWritingOverhead,
   setCurrentSelectedUploadedFile,
-  selectedFile
+  selectedFile,
+  queryChunkSpecs
 }) => {
   const metadataList = [];
   Object.keys(metadata).forEach(filename => {
@@ -74,6 +77,59 @@ const App = ({
     })
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const isSimulationRunningMutable = useRef(false);
+  const [isSimulationRunning, setIsSimulationRunning] = useState(false);
+  isSimulationRunningMutable.current = isSimulationRunning;
+
+  useEffect(() => {
+    const runner = () => setTimeout(() => {
+      const { sharedState } = store.getState();
+      const possibleTasks = [];
+
+      if (sharedState.uploadedFiles.length) possibleTasks.push('create-metadata');
+      if (Object.keys(sharedState.metaData).length) possibleTasks.push('request-processing');
+      if (sharedState.processingQueue.length) possibleTasks.push('cancel-processing');
+      if (sharedState.outputFiles.length) possibleTasks.push('delete-generated');
+
+      const taskToExecute = possibleTasks[randInt(possibleTasks.length)];
+
+      switch (taskToExecute) {
+        case 'create-metadata': {
+          const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+          const startingIndex = randInt(alphabet.length);
+          const endingIndex = startingIndex + randInt(alphabet.length - startingIndex);
+          const filter = `${alphabet.charAt(startingIndex)}-${alphabet.charAt(endingIndex)}`;
+          const file = sharedState.uploadedFiles[randInt(sharedState.uploadedFiles.length)];
+          queryChunkSpecs({ filename: file, filter });
+          break;
+        }
+        case 'request-processing': {
+          const files = Object.keys(sharedState.metaData);
+          const file = files[randInt(files.length)];
+          const filters = Object.keys(sharedState.metaData[file]);
+          const filter = filters[randInt(filters.length)];
+          requestOutputFile(file, filter);
+          break;
+        }
+        case 'cancel-procesing': {
+          const file = sharedState.processingQueue[randInt(sharedState.processingQueue.length)];
+          cancelFileProcessing(file);
+          break;
+        }
+        case 'delete-generated': {
+          const file = sharedState.outputFiles[randInt(sharedState.outputFiles.length)];
+          deleteOutputFile(file);
+          break;
+        }
+        default:
+          break;
+      }
+
+      if (isSimulationRunningMutable.current) runner();
+    }, randInt(2000));
+    if (isSimulationRunning) runner();
+  }, [isSimulationRunning, queryChunkSpecs]);
 
   return (
     <div className="App-container">
@@ -135,13 +191,22 @@ const App = ({
           </div>
         </section>
         <StorageStats />
+        <section className="bottom-buttons">
+          <button
+            className={`simulation-button ${isSimulationRunning ? 'active' : ''}`}
+            onClick={() => setIsSimulationRunning(v => !v)}
+          >
+            Simulate random events
+          </button>
+        </section>
       </div>
     </div>
   );
 }
 
 const mapDispatchToProps = dispatch => ({
-  setCurrentSelectedUploadedFile: filename => dispatch(windowStateActions.setCurrentSelectedUploadedFile(filename))
+  setCurrentSelectedUploadedFile: filename => dispatch(windowStateActions.setCurrentSelectedUploadedFile(filename)),
+  queryChunkSpecs: filterProps => dispatch(queryActions.queryFilter(filterProps))
 })
 
 const mapStateToProps = state => ({

@@ -150,18 +150,3 @@ table {
     border-radius: 10px;
     margin-right: 10px;
 }
-
-.new-filter button {
-    border: none;
-    background-color: #313842;
-    padding: 10px;
-    color: white;
-    border-radius: 10px;
-    margin: 10px;
-    cursor: pointer;
-}
-
-.new-filter button:hover {
-    background-color: #61dafb;
-    color: #23282f;
-}

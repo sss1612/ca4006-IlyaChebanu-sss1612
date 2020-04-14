@@ -34,6 +34,10 @@ const MetadataPie = ({ metadata, currentSelectedFile, currentFilterTabName }) =>
     pieSeries.ticks.template.disabled = true;
     // experimental
 
+    return () => {
+      chart.dispose();
+    }
+
   }, [currentFilterTabName, currentSelectedFile, metadata]);
 
   return (

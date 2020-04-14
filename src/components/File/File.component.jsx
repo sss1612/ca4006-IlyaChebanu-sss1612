@@ -25,12 +25,16 @@ const File = ({
     setIsTooltipActive(false);
   }, []);
 
+  const [isDoubleClickAllowed, setIsDoubleClickAllowed] = useState(true);
+
   return (
     <>
       <div
         className={`file ${variant} ${active ? 'active' : ''}`}
         tabIndex={0}
-        onDoubleClick={onDoubleClick}
+        onDoubleClick={(e) => {
+          if (onDoubleClick && isDoubleClickAllowed) onDoubleClick(e);
+        }}
         ref={fileRef}
         onMouseEnter={showTooltip}
         onMouseLeave={hideTooltip}
@@ -39,6 +43,7 @@ const File = ({
           <FileIcon className='file-icon'/>
           <span className="file-delete" onClick={(e) => {
             e.stopPropagation();
+            setIsDoubleClickAllowed(false);
             if (onDeleteButtonClick) onDeleteButtonClick(e);
           }}>
             <span className='x-icon'>×</span>

@@ -25,10 +25,7 @@ const MetadataTable = ({ metadata, currentSelectedFile, currentFilterTabName }) 
     chart.data = filterWordCountObjectArray.slice(0, 20);
     chart.fontSize = 18;
 
-    console.log(chart.data);
-
     let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-    console.log(categoryAxis.dataFields);
     categoryAxis.dataFields.category = "word";
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.renderer.minGridDistance = 30;
@@ -53,6 +50,10 @@ const MetadataTable = ({ metadata, currentSelectedFile, currentFilterTabName }) 
     let columnTemplate = series.columns.template;
     columnTemplate.strokeWidth = 2;
     columnTemplate.strokeOpacity = 1;
+
+    return () => {
+      chart.dispose();
+    }
   }, [wordsCount]);
 
   return (
