@@ -11,6 +11,7 @@ from "../../../shared/store/sharedState";
 import store from '../store';
 import { Worker } from 'worker_threads';
 import KalmanFilter from 'kalmanjs';
+import checkDiskSpace from 'check-disk-space';
 
 const slash = process.platform === "win32"
 ?  "\\"
@@ -128,6 +129,12 @@ function* removeFromQueueSaga({ type, payload }) {
 function* fullDiskSimulatorSaga() {
   const flag = yield select(sharedStateSelectors.getForcedFullDiskSpaceIsTrue);
   fs.writeFileSync(flagPathName, `${flag}`);
+  if (flag) {
+    yield put(sharedStateActions.setAvailableDiskSpace(process.env.DISK_LIMIT));
+  } else {
+    const { free } = yield checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+    yield put(sharedStateActions.setAvailableDiskSpace(free));
+  }
 }
 
 function* addToQueueWatcher() {
