@@ -1,7 +1,7 @@
+
 import { parentPort } from 'worker_threads';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
-import checkDiskSpace from 'check-disk-space';
 
 /* taken and modified from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array */
 function fisherYates( array ){
@@ -33,7 +33,7 @@ const flagPathName = `${__dirname.split(`${slash}api_dist`)[0]}${slash}flag.txt`
 
 parentPort.on('message',async data => {
   const words = { ...data.wordsCount };
-  const { filename } = data;
+  const { filename, softLimit } = data;
 
   let completedWords = 0;
 
@@ -53,30 +53,35 @@ parentPort.on('message',async data => {
   parentPort.postMessage({ completed: false, words: data.totalWordCount, shuffled: true, });
 
   const time = performance.now();
-  try {
+  
     const dir = `${__dirname}/../../../../output_files`;
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
-    const fileData =  allWords.join(' ');
-    var outputFolderDiskUsage;
-    var uploadFolderDiskUsage;
+    const fileData = allWords.join(' ');
+    
+    const oFiles = fs.readdirSync(outputPath);
+    const outputFolderDiskUsage = oFiles.reduce((acc, file) => {
+      const fileSize = fs.statSync(`${outputPath}${slash}${file}`).size;
+      return acc+fileSize
+    },0)
+    
+    const uFiles = fs.readdirSync(uploadPath);
+    const uploadFolderDiskUsage = uFiles.reduce((acc, file) => {
+      const fileSize = fs.statSync(`${uploadPath}${slash}${file}`).size;
+      return acc+fileSize;
+    },0)
+    
 
-    try {
-      outputFolderDiskUsage = await checkDiskSpace(outputPath);
-      uploadFolderDiskUsage = await checkDiskSpace(uploadPath);
-    } catch (error) {
-      // error
-    }
-    const diskSpace = 80000000;
-    const remainingDiskSpace = outputFolderDiskUsage + uploadFolderDiskUsage;
-    console.log("remainingDiskSpace", remainingDiskSpace,  "outputFolderDiskUsage",  outputFolderDiskUsage,  "uploadFolderDiskUsage",  uploadFolderDiskUsage);
+    const remainingDiskSpace = softLimit - (outputFolderDiskUsage + uploadFolderDiskUsage);
     const flagData = fs.readFileSync(flagPathName).toString(); 
-    console.log(`BOOL >${flagData}<`, flagData.includes("true"));
-    if (flagData.includes("false") && fileData.length < remainingDiskSpace)
-      fs.writeFileSync(`${dir}/${filename}`, fileData);
-    else {
-      parentPort.postMessage({error: "Insufficient space"})
+    
+    try {
+      if (flagData.includes("false") && fileData.length < remainingDiskSpace)
+       fs.writeFileSync(`${dir}/${filename}`, fileData);
+     else {
+       const responseString = flagData.includes("true") ? "Disk full (Simulated disk blocking)" : `Insufficient space:\n ${((fileData.length - remainingDiskSpace) / 1000000).toFixed(3)}MB remaining\n${(parseInt(fileData.length) / 1000000).toFixed(3)}MB required\n`
+       parentPort.postMessage({error:responseString })
     }
   } catch (error) {
     console.error(error);

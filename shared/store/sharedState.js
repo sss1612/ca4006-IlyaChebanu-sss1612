@@ -12,7 +12,7 @@ const initialState = {
   fileWritingOverhead: 0,
   uploadsFolderSize: 0,
   outputsFolderSize: 0,
-  availableDiskSpace: 80000000, // 80MB
+  availableDiskSpace: process.env.DISK_LIMIT, // 80MB
 };
 
 
@@ -258,7 +258,6 @@ export default function reducer(state=initialState, { type, payload }) {
 
     case(FORCE_DISK_SPACE_FULL_SIMULATION): {
       const flag = payload;
-      console.log("flag >>> ", flag);
       return {
         ...state,
         simulateForcedFullDiskSpace: flag

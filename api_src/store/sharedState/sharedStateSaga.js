@@ -29,7 +29,7 @@ const processChunk = (chunk) => new Promise((resolve, reject) => {
   let lastTime = new Date().getTime();
   outputWorker.on('message', (data) => {
     if(data.error) {
-      console.log("suck your mom")
+      store.dispatch(sharedStateActions.notifyUserErrorMessage(data.error))
       return;
     }
     const currentTime = new Date().getTime();
@@ -89,7 +89,7 @@ const processQueue = async (lastTask = null) => {
   try {
     processingTaskFilename = task.filename;
     const chunk = metadata[task.originalFilename][task.chunk];
-    const completed = await processChunk({ ...chunk, filename: task.filename });
+    const completed = await processChunk({ ...chunk, filename: task.filename, softLimit: process.env.DISK_LIMIT });
     processingTaskFilename = null;
 
     if (completed) {

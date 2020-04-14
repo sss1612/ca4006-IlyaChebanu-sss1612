@@ -38,9 +38,9 @@
   },
   "scripts": {
     "api": "nodemon --watch api_src --exec 'npx babel shared -d api_dist/shared && npx babel api_src -d api_dist/server/ && node api_dist/server/server.js'",
+    "everything": "npm run build && npx babel shared -d api_dist/shared && npx babel api_src -d api_dist/server/ && env DISK_LIMIT=30000000 node api_dist/server/server.js",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

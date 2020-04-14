@@ -1,7 +1,6 @@
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:8080";
-console.log("v1.0004")
 const uploadFile = async bodyData => {
     var response;
     try {

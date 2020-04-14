@@ -28,7 +28,6 @@ const FilterFields = props => {
     const [filterProps, setFilterProps] = useState({filter:null, filename: null});
 
     // when selected file changes, update local prop
-    console.log("filterProps", filterProps)
     useEffect(() => {
         setFilterProps({...filterProps, filename: currentSelectedFile});
     },[currentSelectedFile])
