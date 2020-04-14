@@ -17,16 +17,17 @@ import { cancelFileProcessing, requestOutputFile } from './api_lib/processing';
 import uploadFile from './api_lib/upload';
 import { deleteInputFile, deleteOutputFile } from './api_lib/deleter';
 import store from './store/store';
+import { selectors as initialStateSelectors } from './store/initialLoadingState/initialLoadingState';
 
 const randInt = (n) => Math.random() * n << 0;
 
 const downloadOutputFile = async filename => {
-    var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href",     "http://localhost:8080/static/"+filename);
-    downloadAnchorNode.setAttribute("download", filename);
-    document.body.appendChild(downloadAnchorNode); // required for firefox
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", "http://localhost:8080/static/" + filename);
+  downloadAnchorNode.setAttribute("download", filename);
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
 }
 
 const App = ({
@@ -39,7 +40,8 @@ const App = ({
   fileWritingOverhead,
   setCurrentSelectedUploadedFile,
   selectedFile,
-  queryChunkSpecs
+  queryChunkSpecs,
+  isLoading,
 }) => {
   const metadataList = [];
   Object.keys(metadata).forEach(filename => {
@@ -137,68 +139,73 @@ const App = ({
         <p>
           Ilie and Stephen's epic file processor
         </p>
-        <section>
-          <span className="upload-heading"><h2>Uploaded files</h2><UploadButtonComponent/></span>
-          <div
-            {...getRootProps({ onClick: e => e.stopPropagation() })}
-            className={`scroll-row ${isDragActive ? 'drop-ready' : ''}`}
-          >
-            <input {...getInputProps()}></input>
-            {uploadedFiles.map(filename => (
-              <File
-                filename={filename}
-                key={filename}
-                onDoubleClick={() => setCurrentSelectedUploadedFile(filename)}
-                onDeleteButtonClick={() => deleteInputFile(filename)}
-                variant="blue"
-                active={selectedFile === filename}
-              />
-            ))}
-          </div>
-          {selectedFile && <MetadataWindowComponent metadataList={metadataList}/>}
-        </section>
-        <section>
-          <h2>Processing files</h2>
-          <div className="scroll-row">
-            {processingQueue.map((task, i) => (
-              <File
-                filename={task.filename}
-                key={task.filename}
-                onDoubleClick={() => console.log('test')}
-                onDeleteButtonClick={() => {
-                  cancelFileProcessing(task.filename);
-                }}
-                variant="yellow"
-                progress={i === 0 ? wordsCompleted / task.totalWordCount : 0}
-                loading={i === 0 && (wordsCompleted === 0 || wordsCompleted === task.totalWordCount)}
-                timeEstimate={task.timeEstimate}
-              />
-            ))}
-          </div>
-        </section>
-        <section>
-          <h2>Generated files</h2>
-          <div className="scroll-row">
-            {generatedFiles.map(filename => (
-              <File
-                filename={filename}
-                key={filename}
-                onDoubleClick={() => downloadOutputFile(filename)}
-                onDeleteButtonClick={() => deleteOutputFile(filename)}
-                variant="green"
-              />
-            ))}
-          </div>
-        </section>
-        <StorageStats />
-        <section className="bottom-buttons">
-          <button
-            className={`simulation-button ${isSimulationRunning ? 'active' : ''}`}
-            onClick={() => setIsSimulationRunning(v => !v)}
-          >
-            Simulate random events
-          </button>
-        </section>
+        {
+          isLoading
+            ? <div className="spinner"><div className="lds-ring"><div></div><div></div><div></div><div></div></div></div>
+            : <>
+              <section>
+                <span className="upload-heading"><h2>Uploaded files</h2><UploadButtonComponent /></span>
+                <div
+                  {...getRootProps({ onClick: e => e.stopPropagation() })}
+                  className={`scroll-row ${isDragActive ? 'drop-ready' : ''}`}
+                >
+                  <input {...getInputProps()}></input>
+                  {uploadedFiles.map(filename => (
+                    <File
+                      filename={filename}
+                      key={filename}
+                      onDoubleClick={() => setCurrentSelectedUploadedFile(filename)}
+                      onDeleteButtonClick={() => deleteInputFile(filename)}
+                      variant="blue"
+                      active={selectedFile === filename}
+                    />
+                  ))}
+                </div>
+                {selectedFile && <MetadataWindowComponent metadataList={metadataList} />}
+              </section>
+              <section>
+                <h2>Processing files</h2>
+                <div className="scroll-row">
+                  {processingQueue.map((task, i) => (
+                    <File
+                      filename={task.filename}
+                      key={task.filename}
+                      onDeleteButtonClick={() => {
+                        cancelFileProcessing(task.filename);
+                      }}
+                      variant="yellow"
+                      progress={i === 0 ? wordsCompleted / task.totalWordCount : 0}
+                      loading={i === 0 && (wordsCompleted === 0 || wordsCompleted === task.totalWordCount)}
+                      timeEstimate={task.timeEstimate}
+                    />
+                  ))}
+                </div>
+              </section>
+              <section>
+                <h2>Generated files</h2>
+                <div className="scroll-row">
+                  {generatedFiles.map(filename => (
+                    <File
+                      filename={filename}
+                      key={filename}
+                      onDoubleClick={() => downloadOutputFile(filename)}
+                      onDeleteButtonClick={() => deleteOutputFile(filename)}
+                      variant="green"
+                    />
+                  ))}
+                </div>
+              </section>
+              <StorageStats />
+              <section className="bottom-buttons">
+                <button
+                  className={`simulation-button ${isSimulationRunning ? 'active' : ''}`}
+                  onClick={() => setIsSimulationRunning(v => !v)}
+                >
+                  Simulate random events
+                </button>
+              </section>
+          </>
+        }
       </div>
     </div>
   );
@@ -218,6 +225,7 @@ const mapStateToProps = state => ({
   timePerWord: sharedStateSelectors.getTimePerWord(state),
   fileWritingOverhead: sharedStateSelectors.getFileWritingOverhead(state),
   selectedFile: windowStateSelectors.getCurrentSelectedUploadedFileSelector(state),
+  isLoading: initialStateSelectors.getLoadingState(state),
 });
 
 // common practice I make mapDisPatchToProps null, just for the sake of clarity for arity(s)
