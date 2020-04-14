@@ -132,7 +132,7 @@ function* fullDiskSimulatorSaga() {
   if (flag) {
     yield put(sharedStateActions.setAvailableDiskSpace(process.env.DISK_LIMIT));
   } else {
-    const { free } = yield checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+    const { free } = yield checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
     yield put(sharedStateActions.setAvailableDiskSpace(free));
   }
 }

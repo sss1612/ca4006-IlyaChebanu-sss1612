@@ -38,7 +38,7 @@ uploadWatcher.on('add', p => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setUploadsFolderSize(size));
             try {
-                const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
                 store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
             } catch (e) {
                 console.error(e);
@@ -52,7 +52,7 @@ uploadWatcher.on('unlink', p => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setUploadsFolderSize(size));
         try {
-            const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+            const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
             store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
         } catch (e) {
             console.error(e);
@@ -68,7 +68,7 @@ outputWatcher.on('add', p => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setOutputsFolderSize(size));
             try {
-                const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
                 store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
             } catch (e) {
                 console.error(e);
@@ -82,7 +82,7 @@ outputWatcher.on('unlink', p => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setOutputsFolderSize(size));
             try {
-                const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
                 store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
             } catch (e) {
                 console.error(e);

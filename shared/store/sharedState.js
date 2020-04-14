@@ -133,6 +133,7 @@ export const actions = {
 // Reducer
 
 export default function reducer(state=initialState, { type, payload }) {
+  // (state.sharedState.availableDiskSpace)
   switch (type) {
     case (REMOVE_UPLOADED_FILE): {
       return {
