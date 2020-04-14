@@ -129,12 +129,6 @@ function* removeFromQueueSaga({ type, payload }) {
 function* fullDiskSimulatorSaga() {
   const flag = yield select(sharedStateSelectors.getForcedFullDiskSpaceIsTrue);
   fs.writeFileSync(flagPathName, `${flag}`);
-  if (flag) {
-    yield put(sharedStateActions.setAvailableDiskSpace(process.env.DISK_LIMIT));
-  } else {
-    const { free } = yield checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
-    yield put(sharedStateActions.setAvailableDiskSpace(free));
-  }
 }
 
 function* addToQueueWatcher() {

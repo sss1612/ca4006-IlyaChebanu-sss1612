@@ -11,7 +11,6 @@ import bodyParser from "body-parser";
 import chokidar from 'chokidar';
 import path from 'path';
 import fsUtil from 'nodejs-fs-utils';
-import checkDiskSpace from 'check-disk-space';
 
 import { actions as sharedStateActions } from "../shared/store/sharedState";
 
@@ -37,14 +36,6 @@ uploadWatcher.on('add', p => {
         fsUtil.fsize(path.dirname(p), async (err, size) => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setUploadsFolderSize(size));
-            if (!store.getState().sharedState.simulateForcedFullDiskSpace) {
-                try {
-                    const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
-                    store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
-                } catch (e) {
-                    console.error(e);
-                }
-            }
         });
     }, 500); // Needs a bit of time to catch up on the file system
 });
@@ -53,14 +44,6 @@ uploadWatcher.on('unlink', p => {
     fsUtil.fsize(path.dirname(p), async (err, size) => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setUploadsFolderSize(size));
-        if (!store.getState().sharedState.simulateForcedFullDiskSpace) {
-            try {
-                const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
-                store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
-            } catch (e) {
-                console.error(e);
-            }
-        }
     });
 });
 
@@ -71,14 +54,6 @@ outputWatcher.on('add', p => {
         fsUtil.fsize(path.dirname(p), async (err, size) => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setOutputsFolderSize(size));
-            if (!store.getState().sharedState.simulateForcedFullDiskSpace) {
-                try {
-                    const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
-                    store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
-                } catch (e) {
-                    console.error(e);
-                }
-            }
         });
     }, 500);
 });
@@ -87,14 +62,6 @@ outputWatcher.on('unlink', p => {
     fsUtil.fsize(path.dirname(p), async (err, size) => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setOutputsFolderSize(size));
-        if (!store.getState().sharedState.simulateForcedFullDiskSpace) {
-            try {
-                const { free } = await checkDiskSpace(process.platform === "win32" ? 'C:/' : '/');
-                store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
-            } catch (e) {
-                console.error(e);
-            }
-        }
     });
 });
 

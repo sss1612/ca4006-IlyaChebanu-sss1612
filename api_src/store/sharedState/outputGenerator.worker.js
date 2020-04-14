@@ -53,35 +53,35 @@ parentPort.on('message',async data => {
   parentPort.postMessage({ completed: false, words: data.totalWordCount, shuffled: true, });
 
   const time = performance.now();
-  
-    const dir = `${__dirname}/../../../../output_files`;
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-    const fileData = allWords.join(' ');
-    
-    const oFiles = fs.readdirSync(outputPath);
-    const outputFolderDiskUsage = oFiles.reduce((acc, file) => {
-      const fileSize = fs.statSync(`${outputPath}${slash}${file}`).size;
-      return acc+fileSize
-    },0)
-    
-    const uFiles = fs.readdirSync(uploadPath);
-    const uploadFolderDiskUsage = uFiles.reduce((acc, file) => {
-      const fileSize = fs.statSync(`${uploadPath}${slash}${file}`).size;
-      return acc+fileSize;
-    },0)
-    
 
-    const remainingDiskSpace = softLimit - (outputFolderDiskUsage + uploadFolderDiskUsage);
-    const flagData = fs.readFileSync(flagPathName).toString(); 
-    
-    try {
-      if (flagData.includes("false") && fileData.length < remainingDiskSpace)
-       fs.writeFileSync(`${dir}/${filename}`, fileData);
-     else {
-       const responseString = flagData.includes("true") ? "Disk full (Simulated disk blocking)" : `Insufficient space:\n ${((fileData.length - remainingDiskSpace) / 1000000).toFixed(3)}MB remaining\n${(parseInt(fileData.length) / 1000000).toFixed(3)}MB required\n`
-       parentPort.postMessage({error:responseString })
+  const dir = `${__dirname}/../../../../output_files`;
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  const fileData = allWords.join(' ');
+
+  const oFiles = fs.readdirSync(outputPath);
+  const outputFolderDiskUsage = oFiles.reduce((acc, file) => {
+    const fileSize = fs.statSync(`${outputPath}${slash}${file}`).size;
+    return acc+fileSize
+  },0)
+
+  const uFiles = fs.readdirSync(uploadPath);
+  const uploadFolderDiskUsage = uFiles.reduce((acc, file) => {
+    const fileSize = fs.statSync(`${uploadPath}${slash}${file}`).size;
+    return acc+fileSize;
+  },0)
+
+
+  const remainingDiskSpace = softLimit - (outputFolderDiskUsage + uploadFolderDiskUsage);
+  const flagData = fs.readFileSync(flagPathName).toString();
+
+  try {
+    if (flagData.includes("false") && fileData.length < remainingDiskSpace)
+      fs.writeFileSync(`${dir}/${filename}`, fileData);
+    else {
+      const responseString = flagData.includes("true") ? "Disk full (Simulated disk blocking)" : `Insufficient space:\n ${((fileData.length - remainingDiskSpace) / 1000000).toFixed(3)}MB remaining\n${(parseInt(fileData.length) / 1000000).toFixed(3)}MB required\n`
+      parentPort.postMessage({error:responseString })
     }
   } catch (error) {
     console.error(error);
