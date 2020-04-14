@@ -1,3 +1,5 @@
+import { actions } from './initialLoadingState/initialLoadingState';
+
 let subscribedStores = [];
 const synchronizer = (store) => {
   const ws = new WebSocket('ws://localhost:9090');
@@ -12,6 +14,7 @@ const synchronizer = (store) => {
   };
 
   ws.onclose = e => {
+    store.dispatch(actions.setLoading());
     setTimeout(() => {
       synchronizer(store);
     }, 100);
