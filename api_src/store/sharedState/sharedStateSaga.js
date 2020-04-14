@@ -126,7 +126,6 @@ function* removeFromQueueSaga({ type, payload }) {
 }
 
 function* fullDiskSimulatorSaga() {
-  console.log("fullDiskSimulatorSaga called")
   const flag = yield select(sharedStateSelectors.getForcedFullDiskSpaceIsTrue);
   fs.writeFileSync(flagPathName, `${flag}`);
 }

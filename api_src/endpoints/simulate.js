@@ -8,7 +8,6 @@ const router = express.Router()
 
 router.post("/simulate",  (req, res) => {
     const { flag } = req.body;
-    console.log(" A BOOOOOOOOOOL", flag)
     store.dispatch(sharedStateActions.simulateForcedDiskSpace(flag));
     res.send(204)
 })
