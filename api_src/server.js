@@ -38,10 +38,10 @@ uploadWatcher.on('add', p => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setUploadsFolderSize(size));
             try {
-                const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-                store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+                const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
             } catch (e) {
-                //
+                console.error(e);
             }
         });
     }, 500); // Needs a bit of time to catch up on the file system
@@ -52,10 +52,10 @@ uploadWatcher.on('unlink', p => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setUploadsFolderSize(size));
         try {
-            const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-            store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+            const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+            store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
         } catch (e) {
-            //
+            console.error(e);
         }
     });
 });
@@ -68,10 +68,10 @@ outputWatcher.on('add', p => {
             if (err) return console.error(err);
             store.dispatch(sharedStateActions.setOutputsFolderSize(size));
             try {
-                const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-                store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+                const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
             } catch (e) {
-                //
+                console.error(e);
             }
         });
     }, 500);
@@ -82,10 +82,10 @@ outputWatcher.on('unlink', p => {
         if (err) return console.error(err);
         store.dispatch(sharedStateActions.setOutputsFolderSize(size));
             try {
-                const { available } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
-                store.dispatch(sharedStateActions.setAvailableDiskSpace(available));
+                const { free } = await checkDiskSpace(process.platform === "win32" ? 'c:' : '/');
+                store.dispatch(sharedStateActions.setAvailableDiskSpace(free));
             } catch (e) {
-                //
+                console.error(e);
             }
     });
 });
