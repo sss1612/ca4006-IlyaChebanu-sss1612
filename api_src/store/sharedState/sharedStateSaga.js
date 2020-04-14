@@ -11,7 +11,6 @@ from "../../../shared/store/sharedState";
 import store from '../store';
 import { Worker } from 'worker_threads';
 import KalmanFilter from 'kalmanjs';
-import checkDiskSpace from 'check-disk-space';
 
 const slash = process.platform === "win32"
 ?  "\\"
