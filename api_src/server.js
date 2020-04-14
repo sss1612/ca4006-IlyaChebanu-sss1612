@@ -114,5 +114,5 @@ app.use(filterRouter);
 app.use(processingRouter);
 app.use(deleterRouter);
 app.use(simulateRouter);
-app.listen("8080", () => console.log("Please visit http://localhost:8080 in your browser!"));
+app.listen("8080", () => console.log("Please visit http://localhost:8080/app in your browser!"));
 
